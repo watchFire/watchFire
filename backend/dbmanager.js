@@ -8,10 +8,10 @@ function connect(callback) {
     db = mongodb.Db(cfg.bd.name, new mongodb.Server(cfg.bd.url, cfg.bd.port, {auto_reconnect:true}), {w:-1});
     db.open(function(err, cli) {
         if (err) {
-            callback(false);
+            callback(err);
         } else {
             client = cli;
-            callback(true);
+            callback(err);
         }
     });
 }
@@ -24,14 +24,12 @@ function disconnect() {
 exports.disconnect = disconnect;
 
 function insert(json, callback) {
-    console.log("dbmanager.insert()" + json);
     db.collection(cfg.bd.HOT_SPOTS, function(err, col) {
         if (err) {
-            callback(false);
+            callback(err);
         } else {
-            console.log(json);
             col.insert(json);
-            callback(true);
+            callback(err);
         }
     });
 }
@@ -41,15 +39,15 @@ function erase(json, callback) {
     console.log("dbmanager.insert()");
     db.collection(cfg.bd.HOT_SPOTS, function(err, col) {
         if (err) {
-            callback(false);
+            callback(err);
         } else {
-
             col.remove(col.findOne());
-            callback(true);
+            callback(err);
         }
     });
 }
 exports.erase = erase;
+
 /*
 function search(lat1, lon1, lat2, lon2) {
     console.log("dbmanager.search()");

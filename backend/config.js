@@ -5,7 +5,7 @@ module.exports = {
       crawler: "shit.txt"
    },
    cron : {
-      insert: "* * */160 * * *"
+      insert: "0 0 * * * *"
    },
    bd : {
       name : "fire",

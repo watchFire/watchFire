@@ -1,2 +1,0 @@
-ssh -l fireapp vwzq.net
-pass caca
