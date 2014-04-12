@@ -91,6 +91,7 @@ public class CsvRead {
 			rowMap.put("temperature",weatherJson.getTemperature());
 			rowMap.put("windSpeed",weatherJson.getWindSpeed());
 			rowMap.put("humidity",weatherJson.getHumidity());
+			rowMap.put("windDirection",weatherJson.getWindDirection());
 			rowMap.put("vegetation", vegetationJson.getVegetation(lat, lng));
 			return rowMap;
 		}

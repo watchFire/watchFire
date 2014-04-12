@@ -55,5 +55,15 @@ public class WeatherJson {
 			return "";
 		}
 	}
+	
+	
+	public String getWindDirection(){
+		try{
+			return ((JSONObject)this.json.get("weatherObservation")).get("windDirection").toString();
+		}catch(JSONException e){
+			return "";
+		}
+	}	
+	
 
 }
