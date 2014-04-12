@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import main.java.es.lib.json.VegetationJson;
 import main.java.es.lib.json.WeatherJson;
 
 
@@ -26,17 +27,18 @@ public class CsvRead {
 	protected char delimiterChar;
 	protected InputStream file;
 	protected BufferedReader buffer;
+	protected VegetationJson vegetationJson;
 
 	/////////////////
 	// CONSTRUCTOR //
 	/////////////////
-	public CsvRead(String filePath, char delimiterChar) throws IOException{
+	public CsvRead(String filePath, char delimiterChar) throws Exception{
 		this.filePath=filePath;
 		this.delimiterChar=delimiterChar;
 		URL oracle = new URL(filePath);
         URLConnection yc = oracle.openConnection();
-		//this.file = new FileInputStream(filePath);
 		this.buffer = new BufferedReader(new InputStreamReader(yc.getInputStream(), Charset.forName("UTF-8")));
+
 	}
 
 
@@ -67,7 +69,10 @@ public class CsvRead {
 	 */
 	public Map<String, String> read(String[] header, String[] columnsNames) throws Exception{
 		String line;
+		
+
 		if ((line = this.buffer.readLine()) != null) {
+			this.vegetationJson = new VegetationJson(',');
 			String[] row = line.split(Character.toString(delimiterChar));
 			Map<String, String> rowMap = new HashMap<String, String>();
 			String lng = null;
@@ -86,6 +91,7 @@ public class CsvRead {
 			rowMap.put("temperature",weatherJson.getTemperature());
 			rowMap.put("windSpeed",weatherJson.getWindSpeed());
 			rowMap.put("humidity",weatherJson.getHumidity());
+			rowMap.put("vegetation", vegetationJson.getVegetation(lat, lng));
 			return rowMap;
 		}
 		return null;
