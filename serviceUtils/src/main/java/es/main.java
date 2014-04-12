@@ -12,6 +12,11 @@ public class main {
 		//fichero config info URLs
 
 		//Llamada URL para descargar fichero csv
+		if (args.length <1)
+		{
+			System.out.println("Faltan argumentos");
+			System.exit(1);
+		}
 		try {
 			CsvRead csvRead = new CsvRead("https://firms.modaps.eosdis.nasa.gov/active_fire/text/Europe_24h.csv", ',');
 			String properties[] = {"latitude","longitude","acq_date","acq_time","confidence","frp"};
