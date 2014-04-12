@@ -1,11 +1,11 @@
 // Configuration
 
 module.exports = {
-   crawl : {
-      data : [
-         { david  : "urldavid" }// URL de la mierda de Java de David
-      ],
-      cron : "*/5 * * * * *"
+   path: {
+      crawler: "shit.txt"
+   },
+   cron : {
+      insert: "* * */160 * * *"
    },
    bd : {
       name : "fire",
