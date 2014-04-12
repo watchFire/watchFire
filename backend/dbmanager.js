@@ -29,6 +29,7 @@ function insert(json, callback) {
         if (err) {
             callback(false);
         } else {
+            console.log(json);
             col.insert(json);
             callback(true);
         }
@@ -42,6 +43,7 @@ function erase(json, callback) {
         if (err) {
             callback(false);
         } else {
+
             col.remove(col.findOne());
             callback(true);
         }
