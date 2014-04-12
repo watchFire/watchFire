@@ -1,41 +1,38 @@
 var CronJob = require('cron').CronJob;
 var cfg = require('./config');
+var fs = require('fs');
 var dbmanager = require('./dbmanager');
 
 function startNodeServer() {
+    makeJavaCrawler();
     insertJob();
     //deleteJob();
 }
 
-
-function random(min,max,redondeo) {
-    var r = Math.random()*max+min;
-    if (redondeo) {
-        r = Math.floor(r);
-    }
-    return r;
-}
-
-function caca() {
-    return {
-       coordenadas: [random(1,300,false), random(1,300,false)],
-       fecha: new Date(),
-       hora: random(0,24,true),
-       confidence: random(0,100,true),
-       brightness: random(0,300),
-       bright_31: random(0,300),
-       frp: random(0,100)
+function parseJSON(json) {
+    var date = json.acq_date.trim().split("-");
+    var newjson = {
+        coord: [json.longitude, json.latitude],
+        windSpeed: json.windSpeed,
+        date: new Date(date[0],date[1],date[2],json.acq_time.trim().substring(0,2),json.acq_time.trim().substring(2,4)),
+        confidence: json.confidence,
+        temperature: json.temperature,
+        humidity: json.humidity
     };
+
+    return newjson;
 }
 
 
 function insertJob() {
+
     var job = new CronJob({
-          cronTime: cfg.crawl.cron,
+          cronTime: cfg.cron.insert,
           onTick: function() {
               dbmanager.connect(function(ok) {
                   if (ok) {
-                      dbmanager.insert(caca(), function(ok) {
+                      makeJavaCrawler();
+                      dbmanager.insert(parseJSON(json), function(ok) {
                           console.log(ok);
                       });
                   }
@@ -66,19 +63,12 @@ function deleteJob() {
     });
     job.start();
 }
-/*
-function parseJSON(json) {
-    var newJSON = {
-        coordenadas = [json.latitude, json.longitude],
-        fecha = new Date(json.)
 
-
-
-
-    }
-
-}*/
-
+function makeJavaCrawler() {
+    var spawn = require('child_process').spawn;
+    var java = spawn('java', ['-jar', '../serviceUtils.jar', cfg.path.crawler], {detached: true, stdio: ['ignore', 'ignore','ignore']});
+    console.log("Make Java Crawler child");
+}
 
 startNodeServer();
 

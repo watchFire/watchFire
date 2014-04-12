@@ -37,7 +37,7 @@ function insert(json, callback) {
 exports.insert = insert;
 
 function erase(json, callback) {
-    console.log("dbmanager.insert()" + json);
+    console.log("dbmanager.insert()");
     db.collection(cfg.bd.HOT_SPOTS, function(err, col) {
         if (err) {
             callback(false);
@@ -48,4 +48,23 @@ function erase(json, callback) {
     });
 }
 exports.erase = erase;
+/*
+function search(lat1, lon1, lat2, lon2) {
+    console.log("dbmanager.search()");
+    db.collection(cfg.bd.HOT_SPOTS, function(err, col) {
+        if (err) {
+            callback(false);
+        } else {
+            
+             col.find({ coord:
+                        { $geoWithin :
+                            { $box: coordinates: [[lat1, lon1],[lat2, lon2]] } } });
+
+
+            callback(true);
+        }
+    });
+   
+}
+exports.search = search;*/
 
