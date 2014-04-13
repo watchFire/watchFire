@@ -21,7 +21,7 @@ exports.doEverything = doEverything;
 function makeJavaChild(callback) {
     console.log("crawler.makeJavaChild()");
     var spawn = require('child_process').spawn;
-    var java = spawn('java', ['-jar', '../serviceUtils.jar', cfg.path.crawler], {detached: false, stdio: ['ignore', 'ignore','ignore']});
+    var java = spawn('java', ['-jar', '../serviceUtils/serviceUtils.jar', cfg.path.crawler], {detached: false, stdio: ['ignore', 'ignore','ignore']});
     java.on('close', function (code) {
         var data = JSON.parse(fs.readFileSync(cfg.path.crawler, "utf8"));
         console.log("makeJavaChild.makeJavaCrawler() the crawler dies");
