@@ -19,7 +19,7 @@ public class VegetationJson {
 	public VegetationJson(char delimiterChar) throws Exception{
 		this.delimiterChar=delimiterChar;
 		
-		this.file = new FileInputStream("vegetation");
+		this.file = new FileInputStream("../serviceUtils/vegetation");
 		//this.buffer = new BufferedReader(new InputStreamReader(this.file, Charset.forName("UTF-8")));
 		
 		//URL oracle = new URL("http://neo.sci.gsfc.nasa.gov/servlet/RenderData?si=1581320&cs=rgb&format=CSV&width=360&height=180");
