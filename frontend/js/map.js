@@ -75,6 +75,7 @@
 	  
 	  google.maps.event.addListener(map, 'click', function() {
 	    hideTL();
+	    emitClose();
 	  });
 	      
 	  console.log(map.getCenter().A);
@@ -135,6 +136,7 @@
 	      google.maps.event.addListener(fireArea[fires[hotspot]._id], 'click', function() {
    		  showInfo(this.id);
    		  showTL();
+   		  emitGiveMeTweets(fires[hotspot]._id);
 	      });
 	    }	    
 	  }

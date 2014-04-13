@@ -1,4 +1,4 @@
-var socket = io.connect("http://fire.vwzq.net:9999");
+var socket = io.connect("http://localhost:5000");
 socket.on("connect", function () {
     socket.on("getTweets", function(data) {
         printTweet(data);
