@@ -1,70 +1,54 @@
+// Requires
 var mongodb = require('mongodb');
-var cfg = require('./config');
-var db;
-var client;
 
-function connect(callback) {
+module.exports.init = function(conf) {
+    this.conf = conf;
+}
+
+module.exports.connect = function(callback) {
+    if (!module.exports.conf) {
+        console.log("dbmanager error - not init");
+        return;
+    }
     console.log("dbmanager.connect()");
-    db = mongodb.Db(cfg.bd.name, new mongodb.Server(cfg.bd.url, cfg.bd.port, {auto_reconnect:true}), {w:-1});
-    db.open(function(err, cli) {
-        if (err) {
-            callback(err);
-        } else {
-            client = cli;
-            callback(err);
-        }
-    });
-}
-exports.connect = connect;
+    module.exports.db = mongodb.Db(module.exports.conf.name, new mongodb.Server(module.exports.conf.url, module.exports.conf.port, {auto_reconnect:true}), {w:-1});
+    module.exports.db.open(callback);
+};
 
-function disconnect() {
+module.exports.disconnect = function() {
+    if (!module.exports.db) {
+        console.log("dbmanager error - not init");
+        return;
+    }
     console.log("dbmanager.disconnect()");
-    db.close();
-}
-exports.disconnect = disconnect;
+    module.exports.db.close();
+};
 
-function insert(json, callback) {
-    db.collection(cfg.bd.HOT_SPOTS, function(err, col) {
+module.exports.insert = function(collection, json, callback) {
+    if (!module.exports.db) {
+        console.log("dbmanager error - not init");
+        return;
+    }
+    module.exports.db.collection(collection, function(err, col) {
         if (err) {
-            callback(err);
+           callback(err);
         } else {
-            col.insert(json);
-            callback(err);
+           col.insert(json, callback);
         }
     });
-}
-exports.insert = insert;
+};
 
-function erase(json, callback) {
-    console.log("dbmanager.insert()");
-    db.collection(cfg.bd.HOT_SPOTS, function(err, col) {
-        if (err) {
-            callback(err);
-        } else {
-            col.remove(col.findOne());
-            callback(err);
-        }
+module.exports.erase = function(collection, callback) {
+    if (!module.exports.db) {
+        console.log("dbmanager error - not init");
+        return;
+    }
+    console.log("dbmanager.erase()");
+    module.exports.db.collection(collection, function (err, col) {
+       if (err) {
+          callback(err);
+       } else {
+          col.remove(callback);
+       }
     });
 }
-exports.erase = erase;
-
-/*
-function search(lat1, lon1, lat2, lon2) {
-    console.log("dbmanager.search()");
-    db.collection(cfg.bd.HOT_SPOTS, function(err, col) {
-        if (err) {
-            callback(false);
-        } else {
-            
-             col.find({ coord:
-                        { $geoWithin :
-                            { $box: coordinates: [[lat1, lon1],[lat2, lon2]] } } });
-
-
-            callback(true);
-        }
-    });
-   
-}
-exports.search = search;*/
-

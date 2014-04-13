@@ -1,10 +1,9 @@
 var CronJob = require('cron').CronJob;
 var dbmanager = require('./dbmanager');
-var cfg = require('./config');
 
-function insertJob() {
+function insertJob(time) {
     var job = new CronJob({
-        cronTime: cfg.cron.insert,
+        cronTime: time,
         onTick: function() {
             dbmanager.connect(function(err) {
                 if (!err) {
@@ -18,4 +17,5 @@ function insertJob() {
         timeZone: "Europe/Madrid"
     });
 }
+
 exports.insertJob = insertJob;

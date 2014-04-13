@@ -3,31 +3,38 @@ var cfg = require('./config');
 var fs = require('fs');
 var dbmanager = require('./dbmanager');
 
-
 function doEverything() {
     // Crea hijo Java que crawlea info
-    makeJavaChild(function(data) {
-        for (var i=0; i<data.length; i++) {
-            dbmanager.insert(parseJSON(data[i]), doNothing);
+    dbmanager.erase(cfg.bd.HOT_SPOTS, function(err){
+        if (err) {
+           console.log("error borrado");
+        } else {
+           makeJavaChild(function(data) {
+              for (var i=0; i<data.length; i++) {
+                 dbmanager.insert(cfg.bd.HOT_SPOTS, parseJSON(data[i]));
+              }
+              console.log("Introducidos " + data.length + " docs");
+              dbmanager.disconnect();
+           });
         }
-        console.log("Introducidos " + data.length + " docs");
-        updateData();
-        dbmanager.disconnect();
     });
 }
 exports.doEverything = doEverything;
 
-
 function makeJavaChild(callback) {
     console.log("crawler.makeJavaChild()");
     var spawn = require('child_process').spawn;
-    var java = spawn('java', ['-jar', '../serviceUtils/serviceUtils.jar', cfg.path.crawler], {detached: false, stdio: ['ignore', 'ignore','ignore']});
-    java.on('close', function (code) {
-        var data = JSON.parse(fs.readFileSync(cfg.path.crawler, "utf8"));
-        console.log("makeJavaChild.makeJavaCrawler() the crawler dies");
-        callback(data);
+    try {
+       var java = spawn('java', ['-jar', '../serviceUtils/serviceUtils.jar', cfg.path.crawler], {detached: false, stdio: ['ignore', 'ignore','ignore']});
+        java.on('close', function (code) {
+           var data = JSON.parse(fs.readFileSync(cfg.path.crawler, "utf8"));
+           console.log("makeJavaChild.makeJavaCrawler() the crawler dies");
+           callback(data);
         
-    });
+        });
+    } catch (e) {
+        console.log(e);
+    }
 }
 
 function parseJSON(json) {
@@ -45,5 +52,3 @@ function parseJSON(json) {
       };
     return newjson;
 }
-
-var doNothing = function() {};
