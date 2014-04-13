@@ -23,7 +23,7 @@ var twitta = require('./twitta');
         else console.log("Database no conectada");
     });
 
-    // la inteligencia que lee de la BD y crea la nueva BD que leera y servira la interfaz
+    // La inteligencia que lee de la BD y crea la nueva BD que leera y servira la interfaz
 
     // twitta que actualizara con datos de ruido social la BD raw
     var db = mongodb.Db(conf.bd.name, new mongodb.Server(conf.bd.url, conf.bd.port, {auto_reconnect:true}), {w:-1}), con;
