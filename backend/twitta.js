@@ -6,7 +6,8 @@ var mongodb = require("mongodb");
 module.exports = function(con, bd, twit) {
 
    // Conecta a la BD y autentica API Twitter
-   //var db = mongodb.Db(cfg.bd.name, new mongodb.Server(cfg.bd.url, cfg.bd.port, {auto_reconnect:true}), {w:-1});
+   // var db = mongodb.Db(bd.name, new mongodb.Server(bd.url, bd.port, {auto_reconnect:true}), {w:-1}), con;
+
    var T = new Twit({
       consumer_key: twit.key,
       consumer_secret: twit.secret,
@@ -43,7 +44,7 @@ module.exports = function(con, bd, twit) {
 
    // Comprueba si un punto ha superado un umbral de ruído y
    // notifica
-   var checkNoise = function() {
+   var checkNoise = function(stats) {
       console.log("  checking noise...");
       for (var i in stats) {
          if (stats[i].noise > 100) {
@@ -77,12 +78,12 @@ module.exports = function(con, bd, twit) {
                stats.push({name: new Stat(name, round(p.coordenadas))}); 
             });
          }
-         this.checker = setInterval(checkNoise, 10000);
+         this.checker = setInterval(checkNoise, 10000, this.stats);
       },
       destroy : function() {
          //Limpia estructuras y listeners para cargar las nuevas
          clearInterval(this.checker);
-         for (var i in stats) {
+         for (var i in this.stats) {
             stats[i].stream_word.close(); 
             stats[i].stream_gps.close();
          }

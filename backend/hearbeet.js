@@ -1,8 +1,11 @@
+#!/usr/local/bin/node
+
 var crawler = require('./crawler');
 var dbmanager = require('./dbmanager');
+var mongodb = require('mongodb');
 var jobs = require('./jobs');
-var conf = require('./config.js');
-var twitta = require('./twitta.js');
+var conf = require('./config');
+var twitta = require('./twitta');
 
 // Launch core
 (function startHeartBeed() {
@@ -23,10 +26,10 @@ var twitta = require('./twitta.js');
     // la inteligencia que lee de la BD y crea la nueva BD que leera y servira la interfaz
 
     // twitta que actualizara con datos de ruido social la BD raw
-    /*dbmanager.connect(function(err, con) {
-        if (!err) {
-           var twitter = new twitta(con, conf.bd, conf.twitter);
-        }
-    });*/
+    var db = mongodb.Db(conf.bd.name, new mongodb.Server(conf.bd.url, conf.bd.port, {auto_reconnect:true}), {w:-1}), con;
+    db.open(function(err, client) {
+       var twitter = new twitta(client, conf.bd, conf.twitter);
+       twitter.init([]);
+    });
 
 })()

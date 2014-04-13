@@ -1,4 +1,5 @@
 var CronJob = require('cron').CronJob;
+var crawler = require('./crawler');
 var dbmanager = require('./dbmanager');
 
 function insertJob(time) {
