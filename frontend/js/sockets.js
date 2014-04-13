@@ -1,8 +1,7 @@
-var socket = io.connect("http://fire.vwzq.net:9999");
+var socket = io.connect("http://localhost:5000");
 socket.on("connect", function () {
     socket.on("getTweets", function(data) {
-        // Funcion a ejecutar. data hablar con Pepe para ver que devuelve
-        // printTweet(data);
+        printTweet(data);
     });
 });
 
@@ -11,4 +10,9 @@ function emitGiveMeTweets(fireid) {
     socket.emit("giveMeTweets", {
         id: fireid
     });
+}
+
+// Funcion a llamar cuando dejas de adfgdf
+function emitClose() {
+    socket.emit("close");
 }

@@ -40,6 +40,8 @@ var server = function() {
       res.contentType("application/json");
       var sps = new mongodb.Collection(con, cfg.bd.HOT_SPOTS);
       var lon = parseFloat(req.params.longitude), lat = parseFloat(req.params.latitude), radio = parseFloat(req.params.radio);
+
+      console.log(" - requested: [" + [lon, lat] + "]");
       
       if (isNaN(lon) || isNaN(lat)) {
          res.send("{\"error\":\"invalid\"}", 400);

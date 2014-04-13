@@ -52,7 +52,7 @@ module.exports = function(con, bd, twit) {
             notify(stats[i].coordinates, stats[i].noise/10);
          }
       }
-      stats[i]--;
+      //stats[i]--;
    }
 
    // Dada una latitud y longitud, devuelve los extremos de la
