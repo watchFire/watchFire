@@ -1,35 +1,34 @@
 #!/usr/local/bin/node
 
+var mongodb = require('mongodb');
 var crawler = require('./crawler');
 var dbmanager = require('./dbmanager');
-var mongodb = require('mongodb');
 var jobs = require('./jobs');
 var conf = require('./config');
 var twitta = require('./twitta');
 
+// Inicializamos el manager
+dbmanager.init(conf.bd);
+dbmanager.connect(startHeartBeed);
+
 // Launch core
-(function startHeartBeed() {
+function startHeartBeed(err, client) {
 
-    // Inicializamos el manager
-    dbmanager.init(conf.bd);
+    if (!err) {
+       // Registra el job que inserta datos raw parseados a la collection
+       // HOT_SPOTS 
+       jobs.insertJob(conf.cron.insert);
+       // Filtra datos de HOT_SPOTS evalua criticidad y recalcula la
+       // confidence basado en parametros metereológicos -> FIRES
+       jobs.filterJob(conf.cron.filter);
 
-    // Registra el job que inserta datos raw parseados a la collection
-    // HOT_SPOTS 
-    jobs.insertJob(conf.cron.insert);
+       // Twitta que actualizara con datos de ruido social la BD raw
+       if (!err) {
+          var twitter = new twitta(client, conf.bd, conf.twitter);
+       }
+       dbmanager.find(conf.bd.HOT_SPOTS, {confidence:{$gt:90}}, function(err, docs) {
+          if (!err) twitter.init(docs);
+       });
+   }
 
-    // Lanza el primer job para probar
-    dbmanager.connect(function(err, con) {
-        if (!err) crawler.doEverything(con);
-        else console.log("Database no conectada");
-    });
-
-    // La inteligencia que lee de la BD y crea la nueva BD que leera y servira la interfaz
-
-    // twitta que actualizara con datos de ruido social la BD raw
-    var db = mongodb.Db(conf.bd.name, new mongodb.Server(conf.bd.url, conf.bd.port, {auto_reconnect:true}), {w:-1}), con;
-    db.open(function(err, client) {
-       var twitter = new twitta(client, conf.bd, conf.twitter);
-       twitter.init([]);
-    });
-
-})()
+}

@@ -22,31 +22,16 @@ var server = function() {
       next();
    });
 
-   app.get("/points/all", function(req, res) {
-      res.contentType("application/json");
-      var sps = new mongodb.Collection(con, cfg.bd.HOT_SPOTS);
-
-      sps.find().toArray(function(err, docs) {
-         if (err) {
-            console.log(err);
-            res.send("{\"error\":\"bd\"}", 500);
-         } else {
-            res.send(JSON.stringify(docs), 200);
-         }
-      });
-   });
-
    app.get("/points/:longitude/:latitude/:radio?", function(req, res) {
       res.contentType("application/json");
-      var sps = new mongodb.Collection(con, cfg.bd.HOT_SPOTS);
+      var sps = new mongodb.Collection(con, cfg.bd.FIRES);
       var lon = parseFloat(req.params.longitude), lat = parseFloat(req.params.latitude), radio = parseFloat(req.params.radio);
 
-      console.log(" - requested: [" + [lon, lat] + "]");
-      
       if (isNaN(lon) || isNaN(lat)) {
          res.send("{\"error\":\"invalid\"}", 400);
       } else {
-         sps.find({coordenadas : {$near: {$geometry: {type: "Point", coordinates: [lon, lat]}, $maxDistance: isNaN(radio)?10000:radio}}}).toArray(function(err, docs) {
+         radio = isNaN(radio)?100000:radio;
+         sps.find({coordenadas : {$near: {$geometry: {type: "Point", coordinates: [lon, lat]}, $maxDistance: radio}}}).toArray(function(err, docs) {
             if (err) {
                console.log(err);
                res.send("{\"error\":\"bd\"}", 500);

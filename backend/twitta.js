@@ -9,10 +9,10 @@ module.exports = function(con, bd, twit) {
    // var db = mongodb.Db(bd.name, new mongodb.Server(bd.url, bd.port, {auto_reconnect:true}), {w:-1}), con;
 
    var T = new Twit({
-      consumer_key: twit.key,
-      consumer_secret: twit.secret,
-      access_token: twit.token,
-      access_token_secret: twit.token_secret 
+      consumer_key: twit["watchFire_"].key,
+      consumer_secret: twit["watchFire_"].secret,
+      access_token: twit["watchFire_"].token,
+      access_token_secret: twit["watchFire_"].token_secret 
    });
 
    // Crea estructura para escuchar puntos 
@@ -30,7 +30,7 @@ module.exports = function(con, bd, twit) {
       });
 
       this.stream_gps.on("tweet", function(t) {
-         if (t.text.match(/fuego|incendio/)) {
+         if (t.text.match(/fuego|incendio|fire/)) {
             console.log(t.text);
             this.noise++;
          }
@@ -39,7 +39,7 @@ module.exports = function(con, bd, twit) {
 
    // Actualiza campo ruído en la BD para cada incendio
    var notify = function(coord, noise) {
-      new mongodb.Collection(con, bd.HOT_SPOTS).update({coordenadas:coord}, {$set:{noise: noise}});
+      new mongodb.Collection(con, bd.HOT_SPOTS).update({coordenadas:coord}, {$inc:{noise: noise}});
    } 
 
    // Comprueba si un punto ha superado un umbral de ruído y
@@ -47,7 +47,8 @@ module.exports = function(con, bd, twit) {
    var checkNoise = function(stats) {
       console.log("  checking noise...");
       for (var i in stats) {
-         if (stats[i].noise > 100) {
+         console.log(stats[i].name);
+         if (stats[i].noise > 5) {
             console.log("  ALERT ["+stats[i].noise+"] on "+stats[i].coordinates);
             notify(stats[i].coordinates, stats[i].noise/10);
          }
@@ -66,19 +67,20 @@ module.exports = function(con, bd, twit) {
    return {
       stats : [],
       init : function(hotspots) {
+         var that = this;
          this.destroy();
          // Recorre puntos y crea estructura inicial traduciendo gps a nombre de población
          // y calculando los alrededors que escucharemos
          for (var i in hotspots) {
             var p = hotspots[i];
-            T.get("geo/reverse_geocode", {lat:p.coordenadas[0], long:p.coordenadas[1], granularity:"city"}, function(err, reply) {
-               if (err) return;
+            T.get("geo/reverse_geocode", {lat:p.coordinates.coordinates[1], long:p.coordinates.coordinates[0], granularity:"city"}, function(err, reply) {
+               if (err) { console.log(err); return; }
                var name = reply.result.places[0].name;
-               console.log(" load " + name + " hotspot...");
-               stats.push({name: new Stat(name, round(p.coordenadas))}); 
+               console.log(" load " + name + " ["+p.coordinates.coordinates+"]...");
+               that.stats.push({name: new Stat(name, round(p.coordinates.coordinates))});
             });
          }
-         this.checker = setInterval(checkNoise, 10000, this.stats);
+         this.checker = setInterval(checkNoise, 20000, this.stats);
       },
       destroy : function() {
          //Limpia estructuras y listeners para cargar las nuevas

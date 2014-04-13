@@ -10,11 +10,14 @@ function doEverything() {
            console.log("error borrado");
         } else {
            makeJavaChild(function(data) {
+              var tmp;
               for (var i=0; i<data.length; i++) {
-                 dbmanager.insert(cfg.bd.HOT_SPOTS, parseJSON(data[i]));
+                 tmp = parseJSON(data[i]);
+                 if (tmp.confidence > 30) {
+                    dbmanager.insert(cfg.bd.HOT_SPOTS, parseJSON(data[i]));
+                 } 
               }
               console.log("Introducidos " + data.length + " docs");
-              dbmanager.disconnect();
            });
         }
     });

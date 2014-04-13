@@ -38,6 +38,34 @@ module.exports.insert = function(collection, json, callback) {
     });
 };
 
+module.exports.find = function(collection, filter, callback) {
+    if (!module.exports.db) {
+        console.log("dbmanager error - not init");
+        return;
+    }
+    module.exports.db.collection(collection, function(err, con) {
+        if (err) {
+           callback(err);
+        } else {
+           con.find(filter).toArray(callback);
+        }
+    });
+};
+
+module.exports.update = function(collection, query, update, options, callback) {
+    if (!module.exports.db) {
+        console.log("dbmanager error - not init");
+        return;
+    }
+    module.exports.db.collection(collection, function(err, con) {
+        if (err) {
+           callback(err);
+        } else {
+           con.update(query, update, options);
+        }
+    });
+};
+
 module.exports.erase = function(collection, callback) {
     if (!module.exports.db) {
         console.log("dbmanager error - not init");
@@ -48,7 +76,7 @@ module.exports.erase = function(collection, callback) {
        if (err) {
           callback(err);
        } else {
-          col.remove(callback);
+          col.remove({}, callback);
        }
     });
 }
