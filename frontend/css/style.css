@@ -1,8 +1,15 @@
+html { 
+    height: 100%
+}
+
 body {
     background-image: url(../img/bg.png);
     /* Thanks to http://subtlepatterns.com for the pattern */
     font-family: Arial, sans-serif;
     font-size: 13px;
+    height: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 /* Skeletons */
@@ -15,10 +22,11 @@ body {
 }
 
 h1 {
-    float: left;
+    /*float: left;*/
     background: url("../img/logo.png");
     width: 490px;
     height: 125px;
+    margin: 20px auto;
 }
 
 
@@ -47,13 +55,181 @@ h1 {
     border: 1px solid #000000;
 }
 
+#map-canvas {
+    height: 500px;
+    width:1134px;
+    margin: 0px auto;
+    clear: both;
+    padding: 10px;
+    border: 1px solid #000000;
+    margin-top: 30px;
+}
+
+#info {
+    width:1134px;
+    margin: 30px auto;
+    clear: both;
+    text-align: center;
+}
+
 .bottom {
     margin: 20px auto;
-    width: 300px;
+    width: 600px;
     font-style: italic;
+    text-align: center;
+}
+
+#subscribe{
+
+    padding: 10px 25px;
+font-size: 29px;
+border-radius: 13px;
+color: white;
+    /* IE10 Consumer Preview */ 
+    background-image: -ms-linear-gradient(top, #DDA800 0%, #B47F13 100%);
+
+/* Mozilla Firefox */ 
+background-image: -moz-linear-gradient(top, #DDA800 0%, #B47F13 100%);
+
+/* Opera */ 
+background-image: -o-linear-gradient(top, #DDA800 0%, #B47F13 100%);
+
+/* Webkit (Safari/Chrome 10) */ 
+background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #DDA800), color-stop(1, #B47F13));
+
+/* Webkit (Chrome 11+) */ 
+background-image: -webkit-linear-gradient(top, #DDA800 0%, #B47F13 100%);
+
+/* W3C Markup, IE10 Release Preview */ 
+background-image: linear-gradient(to bottom, #DDA800 0%, #B47F13 100%);
+}
+
+#subscribe-form{
+padding: 12px 7px;
+margin-top: 20px;
+border-radius: 5px;
+}
+
+form div{
+    display: inline-block;
 }
 
 a {
     text-decoration: none;
     color: #111111;
+}
+
+      .controls {
+        margin-top: 16px;
+        border: 1px solid transparent;
+        border-radius: 2px 0 0 2px;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        height: 32px;
+        outline: none;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      }
+
+      #pac-input {
+        background-color: #fff;
+        padding: 0 11px 0 13px;
+        width: 400px;
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+        text-overflow: ellipsis;
+        margin-top: 30px;
+      }
+
+      #pac-input:focus {
+        border-color: #4d90fe;
+        margin-left: -1px;
+        padding-left: 14px;  /* Regular padding-left + 1. */
+        width: 401px;
+      }
+
+      .pac-container {
+        font-family: Roboto;
+      }
+
+      #type-selector {
+        color: #fff;
+        background-color: #4d90fe;
+        padding: 5px 11px 0px 11px;
+      }
+
+      #type-selector label {
+        font-family: Roboto;
+        font-size: 13px;
+        font-weight: 300;
+      }
+      
+      .clear{
+        clear: both;
+display: block;
+overflow: hidden;
+visibility: hidden;
+width: 0;
+height: 0;
+      }
+
+input[type="text"]{
+    padding: 10px 25px;
+    font-size: 17px;
+    border-radius: 7px;
+}
+
+input[type="text"]:focus{
+border-color: rgba(221, 168, 0, 0.8);
+outline: 0;
+outline: thin dotted 9;
+-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(221,168,0,.6);
+-moz-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(221,168,0,.6);
+box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(221,168,0,.6);
+}
+
+
+input[type="submit"]{
+padding: 6px 20px;
+font-size: 20px;
+border-radius: 13px;
+color: white;
+    /* IE10 Consumer Preview */ 
+    background-image: -ms-linear-gradient(top, #DDA800 0%, #B47F13 100%);
+
+/* Mozilla Firefox */ 
+background-image: -moz-linear-gradient(top, #DDA800 0%, #B47F13 100%);
+
+/* Opera */ 
+background-image: -o-linear-gradient(top, #DDA800 0%, #B47F13 100%);
+
+/* Webkit (Safari/Chrome 10) */ 
+background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #DDA800), color-stop(1, #B47F13));
+
+/* Webkit (Chrome 11+) */ 
+background-image: -webkit-linear-gradient(top, #DDA800 0%, #B47F13 100%);
+
+/* W3C Markup, IE10 Release Preview */ 
+background-image: linear-gradient(to bottom, #DDA800 0%, #B47F13 100%);
+}
+
+#time_line{
+  height: 477px;
+width: 351px;
+position: absolute;
+top: 25px;
+right: 5px;
+background-color: rgba(255,255,255,0.6);
+padding: 0 10px;
+font-size: 14px;
+overflow: auto;
+z-index: 100;
+}
+
+.tweet{
+border-bottom: 1px solid #AAAAAA;
+}
+
+.tweet h3{
+color: #690e28;
 }
