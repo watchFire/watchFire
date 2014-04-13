@@ -29,19 +29,19 @@ public class VegetationJson {
 	}
 	
 	
-	public String getVegetation(String lat, String lng) throws Exception{
+	public float getVegetation(float lat, float lng) throws Exception{
 		BufferedReader buffer = new BufferedReader(new InputStreamReader(this.file, Charset.forName("UTF-8")));
 		String line;
-		int fila = 10*(90-(int)Float.parseFloat(lat));
+		int fila = 10*(90-(int)(lat));
 		for(int i=0 ; i<fila ; i++){
 			buffer.readLine();
 		}
 		line=buffer.readLine();
 		String[] lngs = line.split(Character.toString(delimiterChar));
 		
-		int columna = 10*((int)Float.parseFloat(lng)+180);
+		int columna = 10*((int)(lng)+180);
 
 		buffer.close();
-		return lngs[columna];
+		return Float.parseFloat(lngs[columna]);
 	}
 }

@@ -14,7 +14,7 @@ public class WeatherJson {
 
 	protected JSONObject json;
 
-	public WeatherJson(String lat, String lng) throws Exception{
+	public WeatherJson(float lat, float lng) throws Exception{
 		URL oracle = new URL("http://api.geonames.org/findNearByWeatherJSON?lat="+lat+"&lng="+lng+"&username=cosa");
 
 		URLConnection yc = oracle.openConnection();
@@ -29,39 +29,39 @@ public class WeatherJson {
 	}
 
 
-	public String getTemperature(){
+	public float getTemperature(){
 		try{
-			return ((JSONObject)this.json.get("weatherObservation")).get("temperature").toString();	
+			return Float.parseFloat(((JSONObject)this.json.get("weatherObservation")).get("temperature").toString());	
 		}catch(JSONException e){
-			return "";
+			return -1;
 		}
 
 	}
 
 
-	public String getWindSpeed(){
+	public float getWindSpeed(){
 		try{
-			return ((JSONObject)this.json.get("weatherObservation")).get("windSpeed").toString();
+			return Float.parseFloat(((JSONObject)this.json.get("weatherObservation")).get("windSpeed").toString());
 		}catch(JSONException e){
-			return "";
+			return -1;
 		}
 	}
 
 
-	public String getHumidity(){
+	public float getHumidity(){
 		try{
-			return ((JSONObject)this.json.get("weatherObservation")).get("humidity").toString();
+			return Float.parseFloat(((JSONObject)this.json.get("weatherObservation")).get("humidity").toString());
 		}catch(JSONException e){
-			return "";
+			return -1;
 		}
 	}
 	
 	
-	public String getWindDirection(){
+	public float getWindDirection(){
 		try{
-			return ((JSONObject)this.json.get("weatherObservation")).get("windDirection").toString();
+			return Float.parseFloat(((JSONObject)this.json.get("weatherObservation")).get("windDirection").toString());
 		}catch(JSONException e){
-			return "";
+			return -1;
 		}
 	}	
 	

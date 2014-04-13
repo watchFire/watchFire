@@ -15,7 +15,7 @@ import main.java.es.lib.json.utils.JSONObject;
 public class FireJson {
 
 
-	public FireJson(ArrayList<Map<String, String>> dataList, String output){
+	public FireJson(ArrayList<Map<String, Object>> dataList, String output){
 
 		Writer writer = null;
 		try {
