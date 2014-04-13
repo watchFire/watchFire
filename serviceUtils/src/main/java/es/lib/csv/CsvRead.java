@@ -67,31 +67,35 @@ public class CsvRead {
 	 * @return
 	 * @throws IOException
 	 */
-	public Map<String, String> read(String[] header, String[] columnsNames) throws Exception{
+	public Map<String, Object> read(String[] header, String[] columnsNames) throws Exception{
 		String line;
 		
 
 		if ((line = this.buffer.readLine()) != null) {
 			this.vegetationJson = new VegetationJson(',');
 			String[] row = line.split(Character.toString(delimiterChar));
-			Map<String, String> rowMap = new HashMap<String, String>();
-			String lng = null;
-			String lat = null;
+			Map<String, Object> rowMap = new HashMap<String, Object>();
+			float lng = 0;
+			float lat = 0;
 			for(int i=0; i<header.length; i++){
 				for(String columnName : columnsNames){
 					if(header[i].equalsIgnoreCase("longitude"))
-						lng=row[i];
+						lng=Float.parseFloat(row[i]);
 					if(header[i].equalsIgnoreCase("latitude"))
-						lat=row[i];
-					if(columnName.equalsIgnoreCase(header[i]))
-						rowMap.put(header[i], row[i]);
+						lat=Float.parseFloat(row[i]);
+					if(columnName.equalsIgnoreCase(header[i])){
+						if((header[i].equalsIgnoreCase("acq_time"))||(header[i].equalsIgnoreCase("acq_date")))
+							rowMap.put(header[i], row[i]);
+						else
+							rowMap.put(header[i], Float.parseFloat(row[i]));
+					}
 				}
 			}
 			WeatherJson weatherJson = new WeatherJson(lat, lng);
-			rowMap.put("temperature",weatherJson.getTemperature());
-			rowMap.put("windSpeed",weatherJson.getWindSpeed());
-			rowMap.put("humidity",weatherJson.getHumidity());
-			rowMap.put("windDirection",weatherJson.getWindDirection());
+			rowMap.put("temperature", weatherJson.getTemperature());
+			rowMap.put("windSpeed", weatherJson.getWindSpeed());
+			rowMap.put("humidity", weatherJson.getHumidity());
+			rowMap.put("windDirection", weatherJson.getWindDirection());
 			rowMap.put("vegetation", vegetationJson.getVegetation(lat, lng));
 			return rowMap;
 		}
@@ -115,13 +119,13 @@ public class CsvRead {
 	
 	
 	
-	public ArrayList<Map<String, String>> search(String[] columnsNames) throws Exception{
+	public ArrayList<Map<String, Object>> search(String[] columnsNames) throws Exception{
 
-		ArrayList<Map<String, String>> resultList = new ArrayList<Map<String, String>>();
+		ArrayList<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
 		//Check header
 		String[] headerToCheck = this.getHeader();
 		//Check body
-		Map<String, String> rowRead;
+		Map<String, Object> rowRead;
 		//While there are rows to read
 		while((rowRead = this.read(headerToCheck, columnsNames))!=null){
 			resultList.add(rowRead);
