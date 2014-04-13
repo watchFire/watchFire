@@ -7,8 +7,8 @@
 	
 	  // Create the map.
 	  var mapOptions = {
-	    zoom: 12,
-	    center: new google.maps.LatLng(38.09024, -95.712891),
+	    zoom: 3,
+	    center: new google.maps.LatLng(40, 1),
 	    mapTypeId: google.maps.MapTypeId.TERRAIN
 	  };
 
@@ -45,8 +45,8 @@
 		scaledSize: new google.maps.Size(25, 25)
 	      };
 
-	      // Create a marker for each place.
-	      var marker = new google.maps.Marker({
+	    // Create a marker for each place.
+	    var marker = new google.maps.Marker({
 		map: map,
 		icon: image,
 		title: place.name,
@@ -74,12 +74,13 @@
 	  });
 	  
 	  google.maps.event.addListener(map, 'click', function() {
-	    hideTL();
+	    printTweet();
 	  });
-	      
-	  console.log(map.getCenter().A);
-	  console.log(map.getCenter().k);
-	  xhr = createCORSRequest("GET", "http://fire.vwzq.net/points/"+ map.getCenter().A +"/"+ map.getCenter().k + "/" + 5000000000/Math.pow(10,map.zoom/2), painter);
+	  var longitud = map.getCenter().lng();
+	  var latitud = map.getCenter().lat();
+	  //console.log('Longitud : ' + longitud);
+	  //console.log('Latitud : ' + latitud);
+	  xhr = createCORSRequest("GET", "http://fire.vwzq.net/points/"+ longitud +"/"+ latitud + "/" + 5000000000/Math.pow(10,map.zoom/2), painter);
 	  
 	  setInterval(function() {
             queryChanges();
@@ -89,8 +90,18 @@
 	}
 
 	function painter(e) {
-
-
+	
+	  // Radio del circulo
+	  var radius = 500000/Math.pow(1.75,map.zoom);
+	  if (radius < 1000) radius = 1000;
+	  //console.log('Dibujando con radio: ' + radius);
+	
+	  // Reshape circulos
+	  for (var tam in fireArea)
+	  {
+	    fireArea[tam].setRadius(radius);
+	  }
+	
 	  var fires;
 
 	  if(e instanceof Array){
@@ -99,24 +110,31 @@
 	    fires = JSON.parse(e.srcElement.responseText);
 	  }
  
-	  
+	  //console.log('Numero de fuegos: ' + fires.length);
+	  //console.log('Dibujando con zoom: ' + map.zoom);
 	  
 	  // Construct the circle for each value in fires.
 	  for (var hotspot in fires) {
-	    /*console.log(fires[hotspot].coordenadas.coordinates[1]);
-	    console.log(fires[hotspot].coordenadas.coordinates[0]);*/
+	    //console.log('Fuego Long: ' + fires[hotspot].coordenadas.coordinates[1]);
+	    //console.log('Fuego Lat: ' + fires[hotspot].coordenadas.coordinates[0]);
 	    
 	    var center = new google.maps.LatLng(fires[hotspot].coordenadas.coordinates[1],
 	    				   fires[hotspot].coordenadas.coordinates[0]);
-	    var radius = 8143197/20;
 	    
+		var colorcito;
+		
+		if (fires[hotspot].impact > 90) colorcito = '#FF0000';
+		else if (fires[hotspot].impact> 45) colorcito = '#F0841F';
+		else colorcito = '#CE9EB1';
+		
+		
 	    var populationOptions = {
 	      id: fires[hotspot]._id,
-	      strokeColor: '#FF0000',
+	      strokeColor: colorcito,
 	      strokeOpacity: 0.8,
-	      strokeWeight: 2,
-	      fillColor: '#FF0000',
-	      fillOpacity: 0.35,
+	      strokeWeight: 0,
+	      fillColor: colorcito,
+	      fillOpacity: 0.55,
 	      clickable: true,
 	      map: map,
 	      center: center,
@@ -124,7 +142,7 @@
 	      timeStamp: fires[hotspot].time
 	    };
 	    // Add the circle for this city to the map.
-    	    //console.log(fireArea[fires[hotspot]._id]);
+    	//console.log('Id de fuego: '  + fireArea[fires[hotspot]._id]);
 	    if((fireArea[fires[hotspot]._id] == null) || (!(fireArea[fires[hotspot]._id] == null)  && (fireArea[fires[hotspot]._id].timeStamp != fires[hotspot].time))){
 	    
 	      if(!(fireArea[fires[hotspot]._id] == null)){
@@ -133,7 +151,6 @@
 	    
 	      fireArea[fires[hotspot]._id] = new google.maps.Circle(populationOptions);
 	      google.maps.event.addListener(fireArea[fires[hotspot]._id], 'click', function() {
-   		  showInfo(this.id);
    		  showTL();
 	      });
 	    }	    
@@ -156,16 +173,28 @@
 	}
 	
 	function zoomChange() {
-	  /*console.log(map.zoom);*/
+	  //console.log('Zoom: ' + map.zoom);
+	  $.ajax({
+            url:"http://fire.vwzq.net/points/"+ map.getCenter().lng() +"/"+ map.getCenter().lat() + "/" + 5000000000/Math.pow(10,map.zoom/2),
+            type: 'GET',
+            dataType: 'json',
+            success: function(data, textstatus, xhr){
+            		//console.log(5000000000/Math.pow(10,map.zoom/2));
+			painter(data);
+            },
+            error: function(error) {
+        	//console.log("error");
+            }
+          });
 	}
 	
 	function queryChanges() {
 	  $.ajax({
-            url:"http://fire.vwzq.net/points/"+ map.getCenter().A +"/"+ map.getCenter().k + "/" + 5000000000/Math.pow(10,map.zoom/2),
+            url:"http://fire.vwzq.net/points/"+ map.getCenter().lng() +"/"+ map.getCenter().lat() + "/" + 5000000000/Math.pow(10,map.zoom/2),
             type: 'GET',
             dataType: 'json',
             success: function(data, textstatus, xhr){
-            		console.log(5000000000/Math.pow(10,map.zoom/2));
+            		//console.log(5000000000/Math.pow(10,map.zoom/2));
 			painter(data);
             },
             error: function(error) {
