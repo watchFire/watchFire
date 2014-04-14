@@ -26,6 +26,7 @@ module.exports = function(con, bd, twit) {
       this.stream_gps = T.stream("statuses/filter", {locations:this.area});
 
       this.stream_word.on("tweet", function(t) {
+         console.log(t.text);
          this.noise++;
       });
 
@@ -77,7 +78,7 @@ module.exports = function(con, bd, twit) {
                if (err) { console.log(err); return; }
                var name = reply.result.places[0].name;
                console.log(" load " + name + " ["+p.coordinates.coordinates+"]...");
-               that.stats.push({name: new Stat(name, round(p.coordinates.coordinates))});
+               that.stats.push(new Stat(name, round(p.coordinates.coordinates)));
             });
          }
          this.checker = setInterval(checkNoise, 20000, this.stats);
