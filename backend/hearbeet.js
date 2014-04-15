@@ -1,6 +1,4 @@
 #!/usr/local/bin/node
-//Run me second
-//launches heartbeat
 
 var mongodb = require('mongodb');
 var crawler = require('./crawler');

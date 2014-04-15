@@ -1,6 +1,4 @@
 #!/usr/local/bin/node
-//Run me first
-//launches server
 
 // Requires
 var mongodb = require("mongodb");
