@@ -14,7 +14,7 @@ function doEverything() {
               for (var i=0; i<data.length; i++) {
                  tmp = parseJSON(data[i]);
                  if (tmp.confidence > 30) {
-                    dbmanager.insert(cfg.bd.HOT_SPOTS, parseJSON(data[i]), function(){});
+                    dbmanager.insert(cfg.bd.HOT_SPOTS, parseJSON(data[i]));
                  } 
               }
               console.log("Introducidos " + data.length + " docs");
