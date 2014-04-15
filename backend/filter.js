@@ -7,9 +7,8 @@ function run() {
         var tmp, new_confidence, noise, criticidad, point;
         var rt, rh, rv, rvg;
         if (!err) {
-           // MODELO METEREOCLIMAFIRELOGICO BASADO EN CALCULOS
-           // FRACTALES REALIZADOS CON UN BINDING DE FORTRAN
-           // A MATLAB
+           // FIRE MODEL
+        	//uses hotspots, wind velocity, temperature, humidity, moisture and social noise
            for (var i in docs) {
               h = docs[i];
               // Temperatura
