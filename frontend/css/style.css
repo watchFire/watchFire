@@ -17,18 +17,14 @@ body {
 .header {
     width: 90%;
     margin: 0 auto;
-    margin-left: 60px;
-    margin-right: 30px;
-}
-
-h1 {
-    /*float: left;*/
-    background: url("../img/logo.png");
-    width: 490px;
+    margin: 20px 30px 20px 60px;
     height: 125px;
-    margin: 20px auto;
+    text-align: center;
 }
 
+.header h1 {
+    display: none;
+}
 
 #location {
     float: right;
