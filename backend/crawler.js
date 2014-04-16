@@ -11,13 +11,15 @@ function doEverything() {
         } else {
            makeJavaChild(function(data) {
               var tmp;
+              var counter = 0;
               for (var i=0; i<data.length; i++) {
                  tmp = parseJSON(data[i]);
                  if (tmp.confidence > 30) {
+                    counter++;
                     dbmanager.insert(cfg.bd.HOT_SPOTS, parseJSON(data[i]), function(){});
                  } 
               }
-              console.log("Introducidos " + data.length + " docs");
+              console.log("Introducidos " + counter + " docs");
            });
         }
     });
