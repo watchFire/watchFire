@@ -40,5 +40,6 @@ module.exports = {
          token: "",
          token_secret: ""
       }
-   }
+   },
+   keywords : ["fuego","fire","incendio"]
 };

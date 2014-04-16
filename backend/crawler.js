@@ -1,23 +1,34 @@
+//REQUIRES
 var CronJob = require('cron').CronJob;
 var cfg = require('./config');
 var fs = require('fs');
 var dbmanager = require('./dbmanager');
+var twitta = require('./twitta');
+var conf = require('./config');
 
 function doEverything() {
-    // Crea hijo Java que crawlea info
+    //Create child: Crawler
     dbmanager.erase(cfg.bd.HOT_SPOTS, function(err){
         if (err) {
            console.log("error borrado");
         } else {
            makeJavaChild(function(data) {
               var tmp;
+              var counter = 0;
               for (var i=0; i<data.length; i++) {
                  tmp = parseJSON(data[i]);
                  if (tmp.confidence > 30) {
+                    counter++;
                     dbmanager.insert(cfg.bd.HOT_SPOTS, parseJSON(data[i]), function(){});
                  } 
               }
-              console.log("Introducidos " + data.length + " docs");
+              if (err) return console.error(err);
+              console.log("Introducidos " + counter + " docs");
+              dbmanager.find(conf.bd.HOT_SPOTS, {confidence:{$gt:80}}, function(err, docs) {
+              if (!err){
+            	  twitter.init(docs);
+              }
+               });
            });
         }
     });

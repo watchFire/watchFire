@@ -9,9 +9,10 @@ var crawler = require('./crawler');
 var dbmanager = require('./dbmanager');
 var jobs = require('./jobs');
 var conf = require('./config');
-var twitta = require('./twitta');
 var time = require('time');
 var mkdirp = require('mkdirp');
+var twitta = require('./twitta');
+
 
 //Initialize database
 dbmanager.init(conf.bd);
@@ -21,19 +22,15 @@ dbmanager.connect(startHeartBeet);
 function startHeartBeet(err, client) {
 	crawler.doEverything();
     if (!err) {
-       // Registers job who parses raw data to colection
+       // Registers job who parses raw data to collection
        // HOT_SPOTS
        jobs.insertJob(conf.cron.insert);
        // Use model to determine fires
        jobs.filterJob(conf.cron.filter);
-
        // Update database with social noise
        if (!err) {
-          var twitter = new twitta(client, conf.bd, conf.twitter);
+    	   GLOBAL.twitter = new twitta(client, conf.bd, conf.twitter);
        }
-       dbmanager.find(conf.bd.HOT_SPOTS, {confidence:{$gt:90}}, function(err, docs) {
-          if (!err) twitter.init(docs);
-       });
    }
 
 }
