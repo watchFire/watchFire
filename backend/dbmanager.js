@@ -15,13 +15,14 @@ module.exports.connect = function(callback) {
     module.exports.db.open(callback);
 };
 
-module.exports.disconnect = function() {
+module.exports.disconnect = function(last) {
     if (!module.exports.db) {
         console.log("dbmanager error - not init");
         return;
     }
     console.log("dbmanager.disconnect()");
     module.exports.db.close();
+    last();
 };
 
 module.exports.insert = function(collection, json, callback) {

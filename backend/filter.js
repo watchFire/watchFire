@@ -45,13 +45,13 @@ function run() {
               // Puntos que ofrecemos al backend
               point = {
                  "date": h.date,
-                 "coordinates" : h.coordinates.coordinates,
+                 "coordinates" : h.coordinates,
                  "confidence" : new_confidence,
                  "impact" : criticidad,
                  "noise" : noise
               }
 
-              dbmanager.update(cfg.bd.FIRES, {coordenadas:point.coordenadas}, point, {upsert:true}, function(err){});
+              dbmanager.update(cfg.bd.FIRES, {coordinates: h.coordinates}, point, {upsert:true}, function(err){});
               
            } 
         }

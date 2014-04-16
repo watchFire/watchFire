@@ -12,9 +12,9 @@ mkdirp('data', function(err) {
 dbmanager.init(conf.bd);
 dbmanager.connect(function(err, con) {
    var sem = 0, close = function() {
-      if (sem < 2) return;
-      dbmanager.disconnect();
-      process.kill();
+      if (sem == 2) { 
+         dbmanager.disconnect(process.kill);
+      }
    }
    if (err) throw err;
    console.log("Connected to database");

@@ -31,7 +31,7 @@ var server = function() {
          res.send("{\"error\":\"invalid\"}", 400);
       } else {
          radio = isNaN(radio)?100000:radio;
-         sps.find({coordenadas : {$near: {$geometry: {type: "Point", coordinates: [lon, lat]}, $maxDistance: radio}}}).toArray(function(err, docs) {
+         sps.find({coordinates : {$near: {$geometry: {type: "Point", coordinates: [lon, lat]}, $maxDistance: radio}}}).toArray(function(err, docs) {
             if (err) {
                console.log(err);
                res.send("{\"error\":\"bd\"}", 500);
