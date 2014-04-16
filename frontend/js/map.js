@@ -105,8 +105,8 @@
 
          var center, calorcito;
 	    
-         center = new google.maps.LatLng(fires[hotspot].coordenadas.coordinates[1],
-                        fires[hotspot].coordenadas.coordinates[0]);
+         center = new google.maps.LatLng(fires[hotspot].coordinates[1],
+                        fires[hotspot].coordinates[0]);
                         
 	     if (fires[hotspot].impact > 90) colorcito = '#FF0000';
          else if (fires[hotspot].impact> 45) colorcito = '#F0841F';

@@ -44,8 +44,8 @@ function run() {
 
               // Puntos que ofrecemos al backend
               point = {
-                 "fecha": h.date,
-                 "coordenadas" : h.coordinates,
+                 "date": h.date,
+                 "coordinates" : h.coordinates.coordinates,
                  "confidence" : new_confidence,
                  "impact" : criticidad,
                  "noise" : noise
