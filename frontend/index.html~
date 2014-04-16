@@ -11,7 +11,7 @@
   <body>
     <div class="header">
         <h1>watchFire</h1>
-        <img src="img/logo_old.png" alt="watchFire" />
+        <img src="img/logo.png" alt="watchFire" />
     </div>
     <div id="map-canvas"></div>
     <input id="pac-input"></input>

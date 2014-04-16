@@ -18,17 +18,26 @@ dbmanager.connect(function(err, con) {
       if (err) throw err;
       console.log(" - created " + conf.bd.HOT_SPOTS);
 
-      dbmanager.db.ensureIndex(col.collectionName,{"coordinates":"2dsphere"}, function(){
-         dbmanager.db.createCollection(conf.bd.FIRES, function(err, col) {
-            if (err) throw err;
-            console.log(" - created " + conf.bd.FIRES);
-
-            dbmanager.db.ensureIndex(col.collectionName,{"coordinates":"2dsphere"}, function(){
-               dbmanager.disconnect(process.kill);
-            });
-            console.log("Index created on " + col.collectionName);
-         });
-      });      
+      var name = col.collectionName;
+      dbmanager.db.ensureIndex(name,{"coordinates":"2dsphere"}, create_fires);
+      
       console.log("Index created on " + col.collectionName);
    });
 });
+
+
+var create_fires = function(){
+   dbmanager.db.createCollection(conf.bd.FIRES, function(err, col) {
+      if (err) throw err;
+      console.log(" - created " + conf.bd.FIRES);
+
+      var name = col.collectionName;
+      dbmanager.db.ensureIndex(conf.bd.FIRES,{"coordinates":"2dsphere"}, close_conection);
+
+      console.log("Index created on " + col.collectionName);
+   });
+}
+
+var close_conection = function(){
+   dbmanager.disconnect(process.kill);
+}
