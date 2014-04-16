@@ -6,8 +6,6 @@ var mongodb = require("mongodb");
 module.exports = function(con, bd, twit) {
 
    // Conecta a la BD y autentica API Twitter
-   // var db = mongodb.Db(bd.name, new mongodb.Server(bd.url, bd.port, {auto_reconnect:true}), {w:-1}), con;
-
    var T = new Twit({
       consumer_key: twit["watchFire_"].key,
       consumer_secret: twit["watchFire_"].secret,
@@ -16,26 +14,10 @@ module.exports = function(con, bd, twit) {
    });
 
    // Crea estructura para escuchar puntos 
-   function Stat(name, area, coordinates) {
-      this.name = name;
+   function Stat(area, coordinates) {
       this.coordinates = coordinates
       this.noise = 0;
       this.area = area;
-      // Mejorar filtros
-      this.stream_word = T.stream("statuses/filter", {track:"incendio "+name+","+name+"incendio"});
-      this.stream_gps = T.stream("statuses/filter", {locations:this.area});
-
-      this.stream_word.on("tweet", function(t) {
-         console.log(t.text);
-         this.noise++;
-      });
-
-      this.stream_gps.on("tweet", function(t) {
-         if (t.text.match(/fuego|incendio|fire/)) {
-            console.log(t.text);
-            this.noise++;
-         }
-      });
    }
 
    // Actualiza campo ruído en la BD para cada incendio
@@ -51,10 +33,9 @@ module.exports = function(con, bd, twit) {
          console.log(stats[i].name);
          if (stats[i].noise > 5) {
             console.log("  ALERT ["+stats[i].noise+"] on "+stats[i].coordinates);
-            notify(stats[i].coordinates, stats[i].noise/10);
+            notify(stats[i].coordinates, stats[i].noise);
          }
       }
-      //stats[i]--;
    }
 
    // Dada una latitud y longitud, devuelve los extremos de la
@@ -66,9 +47,10 @@ module.exports = function(con, bd, twit) {
 
    // Objeto que exportaremos
    return {
-      stats : [],
+      stats : {},
       init : function(hotspots) {
-         var that = this;
+         console.log("init twitta");
+         var that = this, cities = [], watchSymbols;
          this.destroy();
          // Recorre puntos y crea estructura inicial traduciendo gps a nombre de población
          // y calculando los alrededors que escucharemos
@@ -77,21 +59,32 @@ module.exports = function(con, bd, twit) {
             T.get("geo/reverse_geocode", {lat:p.coordinates.coordinates[1], long:p.coordinates.coordinates[0], granularity:"city"}, function(err, reply) {
                if (err) { console.log(err); return; }
                var name = reply.result.places[0].name;
+               cities.push(name);
                console.log(" load " + name + " ["+p.coordinates.coordinates+"]...");
-               that.stats.push(new Stat(name, round(p.coordinates.coordinates)));
+               that.stats[name] = new Stat(round(p.coordinates.coordinates), p.coordinates);
             });
          }
+         // Magic happens
+         watchSymbols = cities.map(function(o){return conf.keywords.map(function(e){return o+" "+e})+""}); 
+         console.log(watchSymbols);
          this.checker = setInterval(checkNoise, 20000, this.stats);
+         this.stream = T.stream("statuses/filter", {track: watchSymbols});
+         this.stream.on("tweet", function(t) {
+            for (var c in cities) {
+               if (t.text.match(new RegExp(cities[c],"gi"))) {
+                  that.stats[cities[c]].noise++;
+                  break;
+               }
+            }
+         });
       },
       destroy : function() {
          //Limpia estructuras y listeners para cargar las nuevas
          clearInterval(this.checker);
-         for (var i in this.stats) {
-            stats[i].stream_word.close(); 
-            stats[i].stream_gps.close();
-         }
+         if (this.stream) this.stream.close();
       },
-      checker : null
+      checker : null,
+      stream : null
    }
 
 }
