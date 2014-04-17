@@ -6,7 +6,7 @@ module.exports = {
    },
    cron : {
       insert: "0 0 * * * *",
-      filter: "* */5 * * *"
+      filter: "0 * * * * *"
    },
    bd : {
       name : "fire",

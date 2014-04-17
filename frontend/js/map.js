@@ -1,6 +1,6 @@
 (function() {
 
-   var API_HOST_URL = "http://api.watchfireproject.com/";
+   var API_HOST_URL = "http://localhost:9999/";
    var API_HOTSPOTS_PATH = function(lon, lat, rad) {
       var URL = "points/:lon/:lat/:rad";
       return URL.replace(/(:\w+)/g, function(param) {
@@ -13,6 +13,7 @@
    }
    
    var map;
+   var fireArea = [];
    google.maps.event.addDomListener(window, 'load', initialize);
 
    function initialize() {
@@ -72,7 +73,7 @@
          searchBox.setBounds(bounds);
       });
 
-      google.maps.event.addListener(map, 'zoom_changed', requestPoints);
+      google.maps.event.addListener(map, 'zoom_changed', zoomChange);
 
       google.maps.event.addListener(map, 'click', function() {
          printTweet();
@@ -89,7 +90,7 @@
    // Pinta radios
    function painter(fires) {
    
-      var fireArea = [], radius;
+      var radius;
 
       // Radio del circulo
       radius = 500000/Math.pow(1.75, map.zoom);
@@ -99,6 +100,11 @@
       for (var tam in fireArea) {
          fireArea[tam].setRadius(radius);
       }
+	  
+	  
+      /*for (var tam in fireArea) {
+         fireArea[tam].setMap(null);
+      }*/ 
 	  
 	  // Construct the circle for each value in fires.
       for (var hotspot in fires) {
@@ -126,13 +132,16 @@
                timeStamp: fires[hotspot].time
          };
          
+         
          // Add the circle for this city to the map.
          if ((fireArea[fires[hotspot]._id] == null) || (!(fireArea[fires[hotspot]._id] == null)  && (fireArea[fires[hotspot]._id].timeStamp != fires[hotspot].time))) {
 	    
             if (fireArea[fires[hotspot]._id]) {
+               console.log("Remove circle");
                fireArea[fires[hotspot]._id].setMap(null);
             }
 
+            //console.log();
             fireArea[fires[hotspot]._id] = new google.maps.Circle(populationOptions);
             google.maps.event.addListener(fireArea[fires[hotspot]._id], 'click', function() {
                $('#time_line').fadeIn()
@@ -149,6 +158,23 @@
       });
    }
 
+   function zoomChange() {
+      //console.log('Zoom: ' + map.zoom);
+      var radius = 5000000000/Math.pow(10,map.zoom/2);
+      $.ajax({
+         url: API_HOST_URL + API_HOTSPOTS_PATH(map.getCenter().lng(),map.getCenter().lat(),radius),
+         type: 'GET',
+         dataType: 'json',
+         success: function(data, textstatus, xhr){
+            //console.log(5000000000/Math.pow(10,map.zoom/2));
+            painter(data);
+         },
+         error: function(error) {
+            //console.log("error");
+         }
+      });
+   }
+
    function requestPoints() {
       var radius = 5000000000/Math.pow(10,map.zoom/2);
       $.ajax({
@@ -156,6 +182,7 @@
          type: 'GET',
          dataType: 'json',
          success: function(data, textstatus, xhr){
+         	     console.log(map.zoom);
                      painter(data);
                   },
          error: function(error) {
