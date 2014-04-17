@@ -24,7 +24,7 @@ function doEverything() {
               }
               if (err) return console.error(err);
               console.log("Introducidos " + counter + " docs");
-              dbmanager.find(conf.bd.HOT_SPOTS, {confidence:{$gt:80}}, function(err, docs) {
+              dbmanager.find(conf.bd.HOT_SPOTS, {confidence:{$gt:70}}, function(err, docs) {
               if (!err){
             	  twitter.init(docs);
               }

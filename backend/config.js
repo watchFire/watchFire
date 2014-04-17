@@ -41,5 +41,5 @@ module.exports = {
          token_secret: ""
       }
    },
-   keywords : ["fuego","fire","incendio"]
+   keywords : ["fire","incendio", decodeURIComponent("%D0%9F%D0%BE%D0%B6%D0%B0%D1%80")]
 };
