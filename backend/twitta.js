@@ -5,9 +5,19 @@ var mongodb = require("mongodb");
 var Geode =require('geode');
 var conf = require('./config');
 var util = require('util')
+var io = require('socket.io').listen(80);
+
+//Open socket for receiving data
+io.sockets.on('connection', function (mysocket) {
+	  socket.on('hotspot', function (data) {
+		  console.log(data);
+	  });
+});
 
 var numTweets=0;
 var geo = new Geode('watchFire', {language: 'en', country : 'US'});
+
+//Tweet class definition
 function Tweet(user, text, coordinates) {
     this.user = user;
     this.text = text;
@@ -18,10 +28,10 @@ module.exports = function(con, bd, twit) {
 
 	//Twitter credentials
    var T = new Twit({
-      consumer_key: twit["watchFire_"].key,
-      consumer_secret: twit["watchFire_"].secret,
-      access_token: twit["watchFire_"].token,
-      access_token_secret: twit["watchFire_"].token_secret 
+      consumer_key: twit["watchFireZar"].key,
+      consumer_secret: twit["watchFireZar"].secret,
+      access_token: twit["watchFireZar"].token,
+      access_token_secret: twit["watchFireZar"].token_secret 
    });
 
    //City properties
@@ -57,6 +67,7 @@ module.exports = function(con, bd, twit) {
 	   console.log("cities: "+Object.keys(cities).length);
        console.log("keywords: "+conf.keywords.length);
        var watchSymbols="";
+       var tweet;
        for (var city in cities) {
        		for (var j = 0; j < conf.keywords.length; j++) {
        			symbol=conf.keywords[j]+" "+city
@@ -67,11 +78,13 @@ module.exports = function(con, bd, twit) {
        		    	   if (err) { console.log(err); return; }
        		    	   for (var j = 0; j < reply.statuses.length; j++) {
        		    		   if(reply.statuses[j].coordinates===null){//if the tweet doesn't come with coordinates, set city coordinates
-       		    			   cities[city].tweets.push( new Tweet(reply.statuses[j].user.screen_name),(reply.statuses[j].text),cities[city].coordinates);
+       		    			   tweet = new Tweet(reply.statuses[j].user.screen_name,reply.statuses[j].text,cities[city].coordinates);
        		    		   }else{
-       		    			   cities[city].tweets.push( new Tweet(reply.statuses[j].user.screen_name),(reply.statuses[j].text),reply.statuses[j].coordinates);
+       		    			   tweet = new Tweet(reply.statuses[j].user.screen_name,reply.statuses[j].text,reply.statuses[j].coordinates);
        		    		   }
-       		    		   console.log(util.inspect(cities[city].tweets));
+       		    		   cities[city].tweets.push(tweet);
+       		    		   io.sockets.emit('tweet', tweet);
+       		    		   console.log(util.inspect(tweet));
        		    		   cities[city].noise++;
        		    	   }
        		       })
@@ -85,11 +98,13 @@ module.exports = function(con, bd, twit) {
     	   for (var city in cities) {
    				if (t.text.toLowerCase().indexOf(city.toLowerCase()) !== -1) {
    					if(t.coordinates===null){//if the tweet doesn't come with coordinates, set city coordinates
-		    			   cities[city].tweets.push( new Tweet(t.user.screen_name),(t.text),cities[city].coordinates);
+		    			   tweet = new Tweet(t.user.screen_name,t.text,cities[city].coordinates);
 		    		   }else{
-		    			   cities[city].tweets.push( new Tweet(t.user.screen_name),(t.text),t.coordinates);
+		    			   tweet = new Tweet(t.user.screen_name,t.text,t.coordinates);
 		    		   }
-   					console.log(util.inspect(cities[city].tweets));
+   					cities[city].tweets.push(tweet);
+   					io.sockets.emit('tweet', tweet);
+   					console.log(util.inspect(tweet));
    					cities[city].noise++; //noise in the city
    					break;
    				}
@@ -145,3 +160,4 @@ module.exports = function(con, bd, twit) {
    }
 
 }
+//});
