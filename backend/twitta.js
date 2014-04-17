@@ -22,15 +22,29 @@ module.exports = function(con, bd, twit) {
       this.noise = 0;
       this.area = area;
    }
-
-   //Update noise to database
-   var notify = function(coord, noise) {
-      new mongodb.Collection(con, bd.HOT_SPOTS).update({coordenadas:coord}, {$inc:{noise: noise}});
-   } 
-
-   //Starts watching twitter
-   //Checks noise
-   var checkNoise = function(cities) {
+   //Extract cities from hotspots
+   function citiesFromHotspots(cities,hotspots){
+	   var keys = Object.keys(hotspots);
+	   var tasksToGo = keys.length;
+	   if (tasksToGo === 0){
+		   openTwitterStream(cities);
+	   }else{
+	   		keys.forEach(function(key){
+	   			var p = hotspots[key];
+	   			geo.findNearby({lat:p.coordinates.coordinates[1],lng:p.coordinates.coordinates[0]}, function(err, results){
+	   	          	if (err) { console.log(err); return; }
+	   		        	var name = results.geonames[0].name;
+	   		            console.log("City " + name + " ["+p.coordinates.coordinates+"]...");
+	   		            cities[name] = new City(round(p.coordinates.coordinates), p.coordinates);
+	   		            if(--tasksToGo === 0){
+	   		            	openTwitterStream(cities);
+	   		            }
+	   	          });
+	   		});
+	   }
+   }
+   //Open twitter stream
+   function openTwitterStream(cities){
 	   console.log("cities: "+Object.keys(cities).length);
        console.log("keywords: "+conf.keywords.length);
        var watchSymbols="";
@@ -50,6 +64,17 @@ module.exports = function(con, bd, twit) {
    				}
    			}
        });
+   }
+
+   //Update noise to database
+   var notify = function(coord, noise) {
+      new mongodb.Collection(con, bd.HOT_SPOTS).update({coordenadas:coord}, {$inc:{noise: noise}});
+   } 
+
+   //Starts watching twitter
+   //Checks noise
+   var checkNoise = function(cities) {
+//	  openTwitterStream(cities);
       console.log("  checking noise...")
       for (var i in cities) {
          if (cities[i].noise > 5) {
@@ -72,18 +97,8 @@ module.exports = function(con, bd, twit) {
          console.log("init twitta");
          var that = this;
          this.destroy();
-         console.log("Hotspots :"+hotspots.length);
-         //translate coordinates to city names
-         for (var i in hotspots) {
-            var p = hotspots[i];
-            geo.findNearby({lat:p.coordinates.coordinates[1],lng:p.coordinates.coordinates[0]}, function(err, results){
-            	if (err) { console.log(err); return; }
-	        	var name = results.geonames[0].name;
-	            console.log("City " + name + " ["+p.coordinates.coordinates+"]...");
-	            that.cities[name] = new City(round(p.coordinates.coordinates), p.coordinates);
-            });
-         }
-         this.checker = setInterval(checkNoise, 10000, this.cities);
+         citiesFromHotspots (that.cities,hotspots);
+         this.checker = setInterval(checkNoise, 20000, that.cities);
       },
       destroy : function() {
          //Clear structures
