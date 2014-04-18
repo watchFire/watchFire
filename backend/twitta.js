@@ -7,13 +7,12 @@ var conf = require('./config');
 var util = require('util')
 var io = require('socket.io').listen(80);
 
-//Open socket for receiving data
-io.sockets.on('connection', function (mysocket) {
-	  socket.on('hotspot', function (data) {
-		  console.log(data);
-	  });
-});
+//TODO:
+//-test socket
+//-save noise to database
+//-save number of tweets we can still send the next 15 min in database
 
+//Variables
 var numTweets=0;
 var geo = new Geode('watchFire', {language: 'en', country : 'US'});
 
@@ -23,6 +22,13 @@ function Tweet(user, text, coordinates) {
     this.text = text;
     this.coordinates = coordinates;
 }
+
+//Open socket for receiving data
+io.sockets.on('connection', function (mysocket) {
+	  socket.on('hotspot', function (data) {
+		  console.log(data);
+	  });
+});
 
 module.exports = function(con, bd, twit) {
 
@@ -125,7 +131,7 @@ module.exports = function(con, bd, twit) {
       console.log("  checking noise...")
       for (var i in cities) {
          if (cities[i].noise > 5) {
-            console.log("  ALERT ["+cities[i].noise+"] on "+cities[i].coordinates);
+            console.log("  ALERT ["+cities[i].noise+"] on "+util.inspect(cities[i].coordinates));
             notify(cities[i].coordinates, cities[i].noise);
          }
       }
