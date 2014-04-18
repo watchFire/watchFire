@@ -102,7 +102,6 @@ background-image: linear-gradient(to bottom, #DDA800 0%, #B47F13 100%);
 
 #subscribe-form{
 padding: 12px 7px;
-margin-top: 20px;
 border-radius: 5px;
 }
 
@@ -215,7 +214,7 @@ width: 351px;
 position: absolute;
 top: 25px;
 right: 5px;
-background-color: rgba(255,255,255,0.6);
+background-color: rgba(255,255,255,0.8);
 padding: 0 10px;
 font-size: 14px;
 overflow: auto;

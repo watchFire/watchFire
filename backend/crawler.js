@@ -53,9 +53,11 @@ function makeJavaChild(callback) {
 
 function parseJSON(json) {
     var date = json.acq_date.trim().split("-");
+    
     var newjson = {
           coordinates: {type: "Point", coordinates: [json.longitude, json.latitude]},
           windSpeed: json.windSpeed,
+          windDirection: json.windDirection,
           date: new Date(date[0],date[1],date[2],json.acq_time.trim().substring(0,2),json.acq_time.trim().substring(2,4)),
           confidence: json.confidence,
           temperature: json.temperature,

@@ -16,7 +16,7 @@ Modelo de datos
 * confidence: 0-100.0,
 * temperature: 0.0-100.0,
 * humidity: 0.0-100.0
-* vegetation: -0.1-0.1
+* vegetation: (-0.1)-0.9
 * frp: 0.0-300.0
 * noise: 0.0-100.0
 
