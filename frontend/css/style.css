@@ -17,18 +17,14 @@ body {
 .header {
     width: 90%;
     margin: 0 auto;
-    margin-left: 60px;
-    margin-right: 30px;
-}
-
-h1 {
-    /*float: left;*/
-    background: url("../img/logo.png");
-    width: 490px;
+    margin: 20px 30px 20px 60px;
     height: 125px;
-    margin: 20px auto;
+    text-align: center;
 }
 
+.header h1 {
+    display: none;
+}
 
 #location {
     float: right;
@@ -106,7 +102,6 @@ background-image: linear-gradient(to bottom, #DDA800 0%, #B47F13 100%);
 
 #subscribe-form{
 padding: 12px 7px;
-margin-top: 20px;
 border-radius: 5px;
 }
 
@@ -219,7 +214,7 @@ width: 351px;
 position: absolute;
 top: 25px;
 right: 5px;
-background-color: rgba(255,255,255,0.6);
+background-color: rgba(255,255,255,0.8);
 padding: 0 10px;
 font-size: 14px;
 overflow: auto;

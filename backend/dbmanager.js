@@ -57,11 +57,11 @@ module.exports.update = function(collection, query, update, options, callback) {
         console.log("dbmanager error - not init");
         return;
     }
-    module.exports.db.collection(collection, function(err, con) {
+    module.exports.db.collection(collection, function(err, col) {
         if (err) {
            callback(err);
         } else {
-           con.update(query, update, options);
+           col.update(query, update, options, callback);
         }
     });
 };

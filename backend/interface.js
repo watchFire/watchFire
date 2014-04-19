@@ -5,6 +5,13 @@ var mongodb = require("mongodb");
 var express = require("express");
 var cfg = require("./config.js");
 
+// Check if we are executing test version and avoid conflicts
+if (process.argv[2] == "testing") {
+   console.log("testing port");
+   cfg.interface.port = 9998;
+   cfg.bd.name = "test";
+}
+
 // DB connection and run main
 var db = mongodb.Db(cfg.bd.name, new mongodb.Server(cfg.bd.url, cfg.bd.port, {auto_reconnect:true}), {w:-1}), con;
 
@@ -31,7 +38,7 @@ var server = function() {
          res.send("{\"error\":\"invalid\"}", 400);
       } else {
          radio = isNaN(radio)?100000:radio;
-         sps.find({coordenadas : {$near: {$geometry: {type: "Point", coordinates: [lon, lat]}, $maxDistance: radio}}}).toArray(function(err, docs) {
+         sps.find({coordinates : {$near: {$geometry: {type: "Point", coordinates: [lon, lat]}, $maxDistance: radio}}}).toArray(function(err, docs) {
             if (err) {
                console.log(err);
                res.send("{\"error\":\"bd\"}", 500);

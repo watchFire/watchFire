@@ -1,23 +1,35 @@
+//REQUIRES
 var CronJob = require('cron').CronJob;
 var cfg = require('./config');
 var fs = require('fs');
 var dbmanager = require('./dbmanager');
+var twitta = require('./twitta');
 
 function doEverything() {
-    // Crea hijo Java que crawlea info
+    //Create child: Crawler
     dbmanager.erase(cfg.bd.HOT_SPOTS, function(err){
         if (err) {
            console.log("error borrado");
         } else {
            makeJavaChild(function(data) {
               var tmp;
+              var counter = 0;
               for (var i=0; i<data.length; i++) {
                  tmp = parseJSON(data[i]);
-                 if (tmp.confidence > 30) {
-                    dbmanager.insert(cfg.bd.HOT_SPOTS, parseJSON(data[i]));
+                 if (tmp.confidence > cfg.threshold.hotspot) {
+                    counter++;
+                    dbmanager.insert(cfg.bd.HOT_SPOTS, parseJSON(data[i]), function(){});
                  } 
               }
-              console.log("Introducidos " + data.length + " docs");
+              if (err) return console.error(err);
+              console.log("Introducidos " + counter + " docs");
+              dbmanager.find(cfg.bd.HOT_SPOTS, {confidence:{$gt:cfg.threshold.fire}}, function(err, docs) {
+            	  if (err) return console.error(err);
+	              if (!err){
+	            	  console.log("Twitta ini");
+	            	  twitter.init(docs);
+	              }
+              });
            });
         }
     });
@@ -28,10 +40,11 @@ function makeJavaChild(callback) {
     console.log("crawler.makeJavaChild()");
     var spawn = require('child_process').spawn;
     try {
-       var java = spawn('java', ['-jar', '../serviceUtils/serviceUtils.jar', cfg.path.crawler], {detached: false, stdio: ['ignore', 'ignore','ignore']});
+       var java = spawn('java', ['-jar', cfg.path.java_crawler, cfg.path.data_file], {detached: false, stdio: ['ignore', 'ignore','ignore']});
         java.on('close', function (code) {
-           var data = JSON.parse(fs.readFileSync(cfg.path.crawler, "utf8"));
-           console.log("makeJavaChild.makeJavaCrawler() the crawler dies");
+          console.log("Parsing file.");
+           var data = JSON.parse(fs.readFileSync(cfg.path.data_file, "utf8"));
+           console.log("makeJavaChild.makeJavaCrawler() the crawler dies.");
            callback(data);
         
         });
@@ -42,9 +55,11 @@ function makeJavaChild(callback) {
 
 function parseJSON(json) {
     var date = json.acq_date.trim().split("-");
+    
     var newjson = {
           coordinates: {type: "Point", coordinates: [json.longitude, json.latitude]},
           windSpeed: json.windSpeed,
+          windDirection: json.windDirection,
           date: new Date(date[0],date[1],date[2],json.acq_time.trim().substring(0,2),json.acq_time.trim().substring(2,4)),
           confidence: json.confidence,
           temperature: json.temperature,

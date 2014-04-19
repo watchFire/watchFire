@@ -5,53 +5,43 @@ function run() {
     console.log("filter process");
     dbmanager.find(cfg.bd.HOT_SPOTS, {}, function(err, docs){
         var tmp, new_confidence, noise, criticidad, point;
-        var rt, rh, rv, rvg;
+        var rt, rh, rv, rvg, rfrp;
         if (!err) {
-           // MODELO METEREOCLIMAFIRELOGICO BASADO EN CALCULOS
-           // FRACTALES REALIZADOS CON UN BINDING DE FORTRAN
-           // A MATLAB
            for (var i in docs) {
-              h = docs[i];
-              // Temperatura
-              if (h.temperature >= 30) rt = 100;
-              else if (h.temperature < 10) rt = 0;
-              else rt = (h.temperature-10)*100/20;
-              // Humedad
-              if (h.humidity >= 50) rh = 0;
-              else if (h.humidity < 30) rh = 100;
-              else rh = 100 + (30-h)*50;
-              // Velocidad viento
-              if (h.windSpeed <= 13) rv = 0; // por paper de incendios
-              else if (h.windSpeed >= 30) rv = 100;
-              else rv = (h.windSpeed-13)*100/17;
-              // Vegetación
-              if (h.vegetation <= 0.4) rvg = 0;
-              else if (h.vegetation > 0.9) rvg = 0;
-              else if (h.vegetation == 0.9) rvg = 100;
-              else rvg = (h.vegetation-0.4)*100/0.5;
+              // Computing different risks
+              rt = temp_risk(docs[i]);
+              rh = humid_risk(docs[i]);
+              rv = wind_risk(docs[i]);
+              rvg = veg_risk(docs[i]);
+              
+              rfrp = docs[i].frp/480.0;
+              
+              new_confidence = (docs[i].confidence*rfrp/100.0)*cfg.weight.frp_risk +
+                                                      rt*cfg.weight.temp_risk +
+                                                      rh*cfg.weight.humid_risk +
+                                                      rv*cfg.weight.wind_risk +
+                                                      rvg*cfg.weight.veg_risk;
 
-              new_confidence = h.confidence + (rt*0.1+rh*0.075+rv*0.55+rvg*0.025);
-
-              // Vemos criticidad a partir de puntos con ruído
-              // social
-              if (h.noise > 30) {
+              // Vemos criticidad a partir de puntos con ruído social
+              if (docs[i].noise > cfg.threshold.social_noise) {
                 noise = true;
-                criticididad = h.noise + 200*(h.frp/300*0.1 + h.vegetatio + h.windSpeed/80*0.6);
+                criticidad = docs[i].noise*0.3 + docs[i].frp*0.35 + docs[i].vegetation*0.2 + docs[i].windSpeed*0.15;
               } else {
                 noise = false;
-                criticidad = 300*(h.frp/300*0.3 + h.vegetation + h.windSpeed/80*0.6);
+                criticidad = docs[i].frp*0.45 + docs[i].vegetation*0.3 + docs[i].windSpeed*0.25;
               } 
 
               // Puntos que ofrecemos al backend
               point = {
-                 "fecha": h.date,
-                 "coordenadas" : h.coordinates,
+                 "date": docs[i].date,
+                 "coordinates" : docs[i].coordinates,
                  "confidence" : new_confidence,
                  "impact" : criticidad,
-                 "noise" : noise
+                 "noise" : noise,
+                 "windDirection" : docs[i].windDirection
               }
 
-              dbmanager.update(cfg.bd.FIRES, {coordenadas:point.coordenadas}, point, {upsert:true}, function(err){});
+              dbmanager.update(cfg.bd.FIRES, {coordinates: docs[i].coordinates}, point, {upsert:true}, function(err){});
               
            } 
         }
@@ -59,3 +49,28 @@ function run() {
 }
 
 exports.run = run;
+
+function temp_risk(spot){
+  if (spot.temperature >= cfg.threshold.temp.max) return 1;
+  else if (spot.temperature < cfg.threshold.temp.min) return 0;
+  else return (spot.temperature-cfg.threshold.temp.min)/20.0;
+}
+
+function humid_risk(spot){
+  if (spot.humidity >= cfg.threshold.humid.max) return 0;
+  else if (spot.humidity < cfg.threshold.humid.min) return 1;
+  else return 1 - ((spot.humidity-cfg.threshold.humid.min)/20.0);
+}
+
+function wind_risk(spot){
+  if (spot.windSpeed <= cfg.threshold.wind.min) return 0; // por paper de incendios
+  else if (spot.windSpeed >= cfg.threshold.wind.max) return 1;
+  else return (spot.windSpeed-cfg.threshold.wind.min)/17.0;
+}
+
+function veg_risk(spot){
+  if (spot.vegetation <= cfg.threshold.veg.min) return 0;
+  else if (spot.vegetation > cfg.threshold.veg.max) return 0;
+  else if (spot.vegetation == cfg.threshold.veg.max) return 1;
+  else return (spot.vegetation)/cfg.threshold.veg.max;
+}

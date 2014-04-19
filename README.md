@@ -16,7 +16,7 @@ Data models
 * confidence: 0-100.0,
 * temperature: 0.0-100.0,
 * humidity: 0.0-100.0
-* vegetation: -0.1-0.1
+* vegetation: (-0.1)-0.9
 * frp: 0.0-300.0
 * noise: 0.0-100.0
 
@@ -32,3 +32,18 @@ Members
 * Rubén Escartin
 * Carlos Bello
 * Pepe Vila
+
+Installation
+---------
+
+For installation follow these steps:
+
+0) (edit config.js with database params and server options)
+
+1) $ node install.js
+
+2) $ forever node interface.js &
+
+3) $ forever node heartbeat.js &
+
+Now we have some cron jobs crawling and processing NASA's data and a REST API ready for requests. Our App displays this information in a friendly way allowing people to be watchfull.

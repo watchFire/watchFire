@@ -7,13 +7,7 @@ function insertJob(time) {
     var job = new CronJob({
         cronTime: time,
         onTick: function() {
-            dbmanager.connect(function(err) {
-                if (!err) {
-                    crawler.doEverything();
-                } else {
-                    console.log("Database no conectada");
-                }
-            });
+           crawler.doEverything();
         },
         start: true,
         timeZone: "Europe/Madrid"
@@ -26,13 +20,7 @@ function filterJob(time) {
     var job = new CronJob({
         cronTime: time,
         onTick: function() {
-            dbmanager.connect(function(err) {
-                if (!err) {
-                    filter.run();
-                } else {
-                    console.log("Database no conectada");
-                }
-            });
+           filter.run();
         },
         start: true,
         timeZone: "Europe/Madrid"
