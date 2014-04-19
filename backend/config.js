@@ -67,18 +67,19 @@ module.exports = {
          access_token_secret: "igDWly8oGRCUYVRZAC98AIPKSa1ATtAbzYnZAOTQqxlP5"
       }
    },
-   keywords : {//TODO: use character set for cyrillic
-	   BY:  [decodeURIComponent("%D0%B0%D0%B3%D0%BE%D0%BD%D1%8C")],//Bellarus
+   keywords : {
+	   AT:  ["feuer"],
+	   BY:  ["агонь"],//Bellarus decodeURIComponent("%D0%B0%D0%B3%D0%BE%D0%BD%D1%8C")
+	   CH:	["brand"],
 	   ES:  ["incendio","fuego"],
 	   FR: 	["feu"],
 	   GB:  ["fire"],
-	   RU: 	[decodeURIComponent("%D0%9F%D0%BE%D0%B6%D0%B0%D1%80")], 
-	   UA: 	[decodeURIComponent("%D0%92%D0%BE%D0%B3%D0%BE%D0%BD%D1%8C")],//Ukraine
-	   US:  ["fire"],
+	   IE:  ["fire"],
+	   PL:  ["ogień"],
 	   PT:  ["fogo"],
-	   PL:  [""],
-	   IE:  [""],
-	   AT:  [""],
-	   CH:	["brand"]
+	   RU: 	["Пожар","огонь"], //decodeURIComponent("%D0%9F%D0%BE%D0%B6%D0%B0%D1%80")
+	   UA: 	["вогонь"],//Ukraine decodeURIComponent("%D0%92%D0%BE%D0%B3%D0%BE%D0%BD%D1%8C")
+   	   US:  ["fire"]
+
    }
 };

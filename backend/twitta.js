@@ -33,7 +33,7 @@ io.sockets.on('connection', function (mysocket) {
 module.exports = function(con, bd, twit) {
 
 	//Twitter credentials
-   var T = new Twit(twit["watchFire_"]);
+   var T = new Twit(twit["watchFireZar"]);
 
    //City properties
    function City(area, coordinates, countryCode) {
