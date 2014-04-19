@@ -1,0 +1,42 @@
+{
+  "name": "watchFire",
+  "version": "0.1.0",
+  "description": "a real time web application for detection of fires using NASA data and people feedback",
+  "contributors": [ 
+      "Adam Barreiro",
+      "David de Juan",
+      "Juan Téllez",
+      "Cristofer Sanz",
+      "Cristian Garrido",
+      "Juan Gallego",
+      "Rubén Escartin",
+      "Carlos Bello",
+      "Pepe Vila"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adambarreiro/watchFire"
+  },
+  "keywords": [
+    "fire",
+    "watchFire",
+    "fires"
+  ],
+  "dependencies":{
+    "mongodb"   : "*",
+    "mkdirp"    : "*",
+    "cron"      : "*",
+    "time"      : "*",
+    "timer"     : "*",
+    "socket.io" : "*",
+    "twit"      : "*",
+    "geode"     : "*",
+    "util"      : "*"  
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/adambarreiro/watchFire/issues"
+  },
+  "homepage": "https://github.com/adambarreiro/watchFire"
+}
