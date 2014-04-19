@@ -4,7 +4,6 @@ var cfg = require('./config');
 var fs = require('fs');
 var dbmanager = require('./dbmanager');
 var twitta = require('./twitta');
-var conf = require('./config');
 
 function doEverything() {
     //Create child: Crawler
@@ -17,14 +16,14 @@ function doEverything() {
               var counter = 0;
               for (var i=0; i<data.length; i++) {
                  tmp = parseJSON(data[i]);
-                 if (tmp.confidence > 30) {
+                 if (tmp.confidence > cfg.threshold.hotspot) {
                     counter++;
                     dbmanager.insert(cfg.bd.HOT_SPOTS, parseJSON(data[i]), function(){});
                  } 
               }
               if (err) return console.error(err);
               console.log("Introducidos " + counter + " docs");
-              dbmanager.find(conf.bd.HOT_SPOTS, {confidence:{$gt:70}}, function(err, docs) {
+              dbmanager.find(cfg.HOT_SPOTS, {confidence:{$gt:cfg.threshold.fire}}, function(err, docs) {
               if (!err){
             	  twitter.init(docs);
               }
@@ -39,9 +38,10 @@ function makeJavaChild(callback) {
     console.log("crawler.makeJavaChild()");
     var spawn = require('child_process').spawn;
     try {
-       var java = spawn('java', ['-jar', '../serviceUtils/serviceUtils.jar', cfg.path.crawler], {detached: false, stdio: ['ignore', 'ignore','ignore']});
+       var java = spawn('java', ['-jar', cfg.path.java_crawler, cfg.path.data_file], {detached: false, stdio: ['ignore', 'ignore','ignore']});
         java.on('close', function (code) {
-           var data = JSON.parse(fs.readFileSync(cfg.path.crawler, "utf8"));
+          console.log("Aqui si!")
+           var data = JSON.parse(fs.readFileSync(cfg.path.data_file, "utf8"));
            console.log("makeJavaChild.makeJavaCrawler() the crawler dies");
            callback(data);
         

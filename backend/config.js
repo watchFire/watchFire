@@ -2,7 +2,8 @@
 
 module.exports = {
    path: {
-      crawler: "data/raw.txt"
+      data_file : "data/raw.txt",
+      java_crawler : "../serviceUtils/serviceUtils.jar"
    },
    cron : {
       insert: "0 0 * * * *",
@@ -19,7 +20,38 @@ module.exports = {
       FIRES : "fuegoosh"
    },
    interface : {
+      defaultRadio : 100000,
       port : 9999
+   },
+   threshold : {
+      // Confidence for acceptance
+      hotspot : 30,
+      fire : 70,
+      // Filter risks
+      temp : {
+         min : 10,
+         max : 30
+      },
+      humid : {
+         min : 30,
+         max : 50
+      },
+      wind : { 
+         min : 13,   // As in fires paper
+         max : 30
+      },
+      veg : {
+         min : 0.0,
+         max : 0.9
+      },
+      social_noise : 30
+   },
+   weight : {
+      frp_risk : 0.3,
+      temp_risk : 0.15,
+      humid_risk : 0.2,
+      wind_risk : 0.1,
+      veg_risk : 0.25
    },
    twitter : {
       "watchFire_" : {

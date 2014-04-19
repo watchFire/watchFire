@@ -13,30 +13,34 @@ function run() {
            for (var i in docs) {
               h = docs[i];
               // Temperatura
-              if (h.temperature >= 30) rt = 1;
-              else if (h.temperature < 10) rt = 0;
-              else rt = (h.temperature-10.0)/20.0;
+              if (h.temperature >= cfg.threshold.temp.max) rt = 1;
+              else if (h.temperature < cfg.threshold.temp.min) rt = 0;
+              else rt = (h.temperature-cfg.threshold.temp.min)/20.0;
               // Humedad
-              if (h.humidity >= 50) rh = 0;
-              else if (h.humidity < 30) rh = 1;
-              else rh = 1 - ((h.humidity-30.0)/20.0);
+              if (h.humidity >= cfg.threshold.humid.max) rh = 0;
+              else if (h.humidity < cfg.threshold.humid.min) rh = 1;
+              else rh = 1 - ((h.humidity-cfg.threshold.humid.min)/20.0);
               // Velocidad viento
-              if (h.windSpeed <= 13) rv = 0; // por paper de incendios
-              else if (h.windSpeed >= 30) rv = 1;
-              else rv = (h.windSpeed-13.0)/17.0;
+              if (h.windSpeed <= cfg.threshold.wind.min) rv = 0; // por paper de incendios
+              else if (h.windSpeed >= cfg.threshold.wind.max) rv = 1;
+              else rv = (h.windSpeed-cfg.threshold.wind.min)/17.0;
               // Vegetación
-              if (h.vegetation <= 0.0) rvg = 0;
-              else if (h.vegetation > 0.9) rvg = 0;
-              else if (h.vegetation == 0.9) rvg = 1;
-              else rvg = (h.vegetation)/0.9;
+              if (h.vegetation <= cfg.threshold.veg.min) rvg = 0;
+              else if (h.vegetation > cfg.threshold.veg.max) rvg = 0;
+              else if (h.vegetation == cfg.threshold.veg.max) rvg = 1;
+              else rvg = (h.vegetation)/cfg.threshold.veg.max;
               
               rfrp = h.frp/480.0;
               
-              new_confidence = (h.confidence*rfrp/100.0)*0.3 + rt*0.15 + rh*0.2 + rv*0.1 + rvg*0.25;
+              new_confidence = (h.confidence*rfrp/100.0)*cfg.weight.frp_risk +
+                                                      rt*cfg.weight.temp_risk +
+                                                      rh*cfg.weight.humid_risk +
+                                                      rv*cfg.weight.wind_risk +
+                                                      rvg*cfg.weight.veg_risk;
 
               // Vemos criticidad a partir de puntos con ruído
               // social
-              if (h.noise > 30) {
+              if (h.noise > cfg.threshold.social_noise) {
                 noise = true;
                 criticidad = h.noise*0.3 + h.frp*0.35 + h.vegetation*0.2 + h.windSpeed*0.15;
               } else {
