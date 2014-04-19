@@ -33,12 +33,7 @@ io.sockets.on('connection', function (mysocket) {
 module.exports = function(con, bd, twit) {
 
 	//Twitter credentials
-   var T = new Twit({
-      consumer_key: twit["watchFire_"].key,
-      consumer_secret: twit["watchFire_"].secret,
-      access_token: twit["watchFire_"].token,
-      access_token_secret: twit["watchFire_"].token_secret 
-   });
+   var T = new Twit(twit["watchFire_"]);
 
    //City properties
    function City(area, coordinates, countryCode) {

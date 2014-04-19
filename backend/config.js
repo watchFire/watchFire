@@ -55,22 +55,16 @@ module.exports = {
    },
    twitter : {
       "watchFire_" : {
-         key: "N2hj4dNVf19AzxWQhR5Ta7G2V",
-         secret: "6rsWfOm4AVl2krS62PU9aT4pWaMzhmykSS6VcEkjiY8Lz92EN2",
-         token: "2439996918-eEY3AzsFVTtLEFGo3qvUacWPrjEkDekkYSydtoZ",
-         token_secret: "cMyye71rzl7fPQhv7z2WRmz9yFdtjGGHljRRlubuaLmD4"
+         consumer_key: "N2hj4dNVf19AzxWQhR5Ta7G2V",
+         consumer_secret: "6rsWfOm4AVl2krS62PU9aT4pWaMzhmykSS6VcEkjiY8Lz92EN2",
+         access_token: "2439996918-eEY3AzsFVTtLEFGo3qvUacWPrjEkDekkYSydtoZ",
+         access_token_secret: "cMyye71rzl7fPQhv7z2WRmz9yFdtjGGHljRRlubuaLmD4"
       },
       "watchFireZar" : {
-         key: "hWJkUuSSFnR4Z9QBj4oJpKYoH",
-         secret: "O5Zm3pIKzLAaoE0g0hZtBc8T1H30BuHuyTSru01tSqpGsGo89Q",
-         token: "2441302938-ThIMFFdbNAyWq8vLR7xaOCNU8YiopuYlT5N6VgG",
-         token_secret: "igDWly8oGRCUYVRZAC98AIPKSa1ATtAbzYnZAOTQqxlP5"
-      },
-      "watchFire2" : {
-         key: "",
-         secret: "",
-         token: "",
-         token_secret: ""
+         consumer_key: "hWJkUuSSFnR4Z9QBj4oJpKYoH",
+         consumer_secret: "O5Zm3pIKzLAaoE0g0hZtBc8T1H30BuHuyTSru01tSqpGsGo89Q",
+         access_token: "2441302938-ThIMFFdbNAyWq8vLR7xaOCNU8YiopuYlT5N6VgG",
+         access_token_secret: "igDWly8oGRCUYVRZAC98AIPKSa1ATtAbzYnZAOTQqxlP5"
       }
    },
    keywords : {//TODO: use character set for cyrillic

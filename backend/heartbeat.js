@@ -14,6 +14,11 @@ var mkdirp = require('mkdirp');
 var twitta = require('./twitta');
 var filter = require('./filter');
 
+// Check if we are on test version to avoid conflicts
+if (process.argv[2] == "testing") {
+   console.log("testing");
+   cfg.bd.name = "test";
+}
 
 //Initialize database
 dbmanager.init(cfg.bd);
