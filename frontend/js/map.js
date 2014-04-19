@@ -224,8 +224,8 @@
 
 
    function printTweet(data){
-      //$('#time_line').prepend('<div class="tweet"><h3>'+ data.username +'</h3><p>'+ data.text +'</p></div>');
-      $('#time_line').prepend('<div class="tweet"><h3>Username</h3><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras quis venenatis elit. Curabitur a justo nec justo lacinia tincidunt a et mi.</p></div>');
+      $('#time_line').prepend('<div class="tweet"><h3>'+ data.username +'</h3><p>'+ data.text +'</p></div>');
+//      $('#time_line').prepend('<div class="tweet"><h3>Username</h3><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras quis venenatis elit. Curabitur a justo nec justo lacinia tincidunt a et mi.</p></div>');
    }
 
 })()

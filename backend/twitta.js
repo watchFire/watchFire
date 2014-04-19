@@ -5,7 +5,7 @@ var mongodb = require("mongodb");
 var Geode =require('geode');
 var conf = require('./config');
 var util = require('util')
-var io = require('socket.io').listen(80);
+var io = require('socket.io').listen(5000);
 
 //TODO:
 //-test socket
@@ -25,7 +25,7 @@ function Tweet(user, text, coordinates) {
 
 //Open socket for receiving data
 io.sockets.on('connection', function (mysocket) {
-	  socket.on('hotspot', function (data) {
+	  socket.on('fire', function (data) {
 		  console.log(data);
 	  });
 });
@@ -34,10 +34,10 @@ module.exports = function(con, bd, twit) {
 
 	//Twitter credentials
    var T = new Twit({
-      consumer_key: twit["watchFireZar"].key,
-      consumer_secret: twit["watchFireZar"].secret,
-      access_token: twit["watchFireZar"].token,
-      access_token_secret: twit["watchFireZar"].token_secret 
+      consumer_key: twit["watchFire_"].key,
+      consumer_secret: twit["watchFire_"].secret,
+      access_token: twit["watchFire_"].token,
+      access_token_secret: twit["watchFire_"].token_secret 
    });
 
    //City properties
