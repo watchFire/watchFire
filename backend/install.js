@@ -3,9 +3,15 @@ var mongodb = require('mongodb');
 var cfg = require('./config');
 var mkdirp = require('mkdirp');
 
+// Check testing version
+if (process.argv[2] == "testing") {
+   console.log("testing");
+   cfg.bd.name = "test";
+}
+
 // Create directory
 mkdirp('data', function(err) {
-   if (err) throw err;
+   if (err) console.log(err);
 });
 
 // Create DB collections and indexes

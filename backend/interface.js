@@ -5,6 +5,13 @@ var mongodb = require("mongodb");
 var express = require("express");
 var cfg = require("./config.js");
 
+// Check if we are executing test version and avoid conflicts
+if (process.argv[2] == "testing") {
+   console.log("testing port");
+   cfg.interface.port = 9998;
+   cfg.bd.name = "test";
+}
+
 // DB connection and run main
 var db = mongodb.Db(cfg.bd.name, new mongodb.Server(cfg.bd.url, cfg.bd.port, {auto_reconnect:true}), {w:-1}), con;
 
