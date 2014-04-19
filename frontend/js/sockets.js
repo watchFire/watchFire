@@ -1,4 +1,4 @@
-var socket = io.connect("http://test.watchfireproject.com:5000");
+var socket = io.connect("http://api.watchfireproject.com/tweets/");
 socket.on("connect", function () {
     socket.on("tweet", function(data) {
         printTweet(data);

@@ -5,7 +5,7 @@ var mongodb = require("mongodb");
 var Geode =require('geode');
 var conf = require('./config');
 var util = require('util')
-var io = require('socket.io').listen(5000);
+var io = require('socket.io').listen(conf.sockets.port);
 
 //TODO:
 //-test socket

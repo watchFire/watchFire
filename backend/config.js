@@ -23,6 +23,9 @@ module.exports = {
       defaultRadio : 100000,
       port : 9999
    },
+   sockets : {
+      port : 5000
+   },
    threshold : {
       // Confidence for acceptance
       hotspot : 60,
