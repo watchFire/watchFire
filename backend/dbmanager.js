@@ -80,22 +80,3 @@ module.exports.erase = function(collection, callback) {
        }
     });
 }
-
-module.exports.index = function(collection, callback) {
-    if (!module.exports.db) {
-        console.log("dbmanager error - not init");
-        return;
-    }
-    console.log("dbmanager.index()");
-    
-    module.exports.db.ensureIndex(col,{"coordinates":"2dsphere"}, callback);
-    
-    /*module.exports.db.collection(collection, function (err, col) {
-       if (err) {
-          callback(err);
-       } else {
-          //col.ensureIndex({"coordinates":"2dsphere"});
-          col.ensureIndex({"coordinates":"2dsphere"}, callback);
-       }
-    });*/
-}

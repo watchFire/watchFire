@@ -53,7 +53,7 @@ module.exports = function(con, bd, twit) {
 	   			geo.findNearby({lat:p.coordinates.coordinates[1],lng:p.coordinates.coordinates[0]}, function(err, results){
 	   	          	if (err) { console.log(err); return; }
 	   		        var name = results.geonames[0].name;
-	   		        console.log("City " + name + " ["+p.coordinates.coordinates+"]...");
+	   		        //console.log("City " + name + " ["+p.coordinates.coordinates+"]...");
 	   		        cities[name] = new City(round(p.coordinates.coordinates), p.coordinates);
 	   		        if(--tasksToGo === 0){
 	   		           openTwitterStream(cities);
@@ -64,7 +64,7 @@ module.exports = function(con, bd, twit) {
    }
    //Open twitter stream
    function openTwitterStream(cities){
-	   console.log("cities: "+Object.keys(cities).length);
+       console.log("cities: "+Object.keys(cities).length);
        console.log("keywords: "+conf.keywords.length);
        var watchSymbols="";
        var tweet;
@@ -84,7 +84,7 @@ module.exports = function(con, bd, twit) {
        		    		   }
        		    		   cities[city].tweets.push(tweet);
        		    		   io.sockets.emit('tweet', tweet);
-       		    		   console.log(util.inspect(tweet));
+       		    		   //console.log(util.inspect(tweet));
        		    		   cities[city].noise++;
        		    	   }
        		       })
@@ -94,7 +94,7 @@ module.exports = function(con, bd, twit) {
        console.log("watchSymbols:"+watchSymbols);
        this.stream = T.stream("statuses/filter", {track: watchSymbols});
        this.stream.on("tweet", function(t) {
-    	   console.log(t.text);
+    	   //console.log(t.text);
     	   for (var city in cities) {
    				if (t.text.toLowerCase().indexOf(city.toLowerCase()) !== -1) {
    					if(t.coordinates===null){//if the tweet doesn't come with coordinates, set city coordinates
@@ -104,7 +104,7 @@ module.exports = function(con, bd, twit) {
 		    		   }
    					cities[city].tweets.push(tweet);
    					io.sockets.emit('tweet', tweet);
-   					console.log(util.inspect(tweet));
+   					//console.log(util.inspect(tweet));
    					cities[city].noise++; //noise in the city
    					break;
    				}
@@ -125,7 +125,7 @@ module.exports = function(con, bd, twit) {
       console.log("  checking noise...")
       for (var i in cities) {
          if (cities[i].noise > 5) {
-            console.log("  ALERT ["+cities[i].noise+"] on "+cities[i].coordinates);
+            //console.log("  ALERT ["+cities[i].noise+"] on "+cities[i].coordinates);
             notify(cities[i].coordinates, cities[i].noise);
          }
       }

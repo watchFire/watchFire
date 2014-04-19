@@ -12,6 +12,7 @@ var conf = require('./config');
 var time = require('time');
 var mkdirp = require('mkdirp');
 var twitta = require('./twitta');
+var filter = require('./filter');
 
 
 //Initialize database
@@ -27,6 +28,7 @@ function startHeartBeet(err, client) {
        jobs.insertJob(conf.cron.insert);
        // Use model to determine fires
        jobs.filterJob(conf.cron.filter);
+       
        // Update database with social noise
        if (!err) {
     	   GLOBAL.twitter = new twitta(client, conf.bd, conf.twitter);
