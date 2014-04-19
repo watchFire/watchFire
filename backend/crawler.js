@@ -23,11 +23,13 @@ function doEverything() {
               }
               if (err) return console.error(err);
               console.log("Introducidos " + counter + " docs");
-              dbmanager.find(cfg.HOT_SPOTS, {confidence:{$gt:cfg.threshold.fire}}, function(err, docs) {
-              if (!err){
-            	  twitter.init(docs);
-              }
-               });
+              dbmanager.find(cfg.bd.HOT_SPOTS, {confidence:{$gt:cfg.threshold.fire}}, function(err, docs) {
+            	  if (err) return console.error(err);
+	              if (!err){
+	            	  console.log("Twitta ini");
+	            	  twitter.init(docs);
+	              }
+              });
            });
         }
     });
@@ -40,9 +42,9 @@ function makeJavaChild(callback) {
     try {
        var java = spawn('java', ['-jar', cfg.path.java_crawler, cfg.path.data_file], {detached: false, stdio: ['ignore', 'ignore','ignore']});
         java.on('close', function (code) {
-          console.log("Aqui si!")
+          console.log("Parsing file.");
            var data = JSON.parse(fs.readFileSync(cfg.path.data_file, "utf8"));
-           console.log("makeJavaChild.makeJavaCrawler() the crawler dies");
+           console.log("makeJavaChild.makeJavaCrawler() the crawler dies.");
            callback(data);
         
         });
