@@ -8,7 +8,7 @@ var mongodb = require('mongodb');
 var crawler = require('./crawler');
 var dbmanager = require('./dbmanager');
 var jobs = require('./jobs');
-var conf = require('./config');
+var cfg = require('./config');
 var time = require('time');
 var mkdirp = require('mkdirp');
 var twitta = require('./twitta');
@@ -16,7 +16,7 @@ var filter = require('./filter');
 
 
 //Initialize database
-dbmanager.init(conf.bd);
+dbmanager.init(cfg.bd);
 dbmanager.connect(startHeartBeet);
 
 //Launch core
@@ -25,13 +25,13 @@ function startHeartBeet(err, client) {
     if (!err) {
        // Registers job who parses raw data to collection
        // HOT_SPOTS
-       jobs.insertJob(conf.cron.insert);
+       jobs.insertJob(cfg.cron.insert);
        // Use model to determine fires
-       jobs.filterJob(conf.cron.filter);
-       
+       jobs.filterJob(cfg.cron.filter);
+
        // Update database with social noise
        if (!err) {
-    	   GLOBAL.twitter = new twitta(client, conf.bd, conf.twitter);
+    	   GLOBAL.twitter = new twitta(client, cfg.bd, cfg.twitter);
        }
    }
 
