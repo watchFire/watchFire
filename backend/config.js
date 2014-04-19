@@ -73,5 +73,18 @@ module.exports = {
          token_secret: ""
       }
    },
-   keywords : ["fire","incendio", decodeURIComponent("%D0%9F%D0%BE%D0%B6%D0%B0%D1%80")]
+   keywords : {//TODO: use character set for cyrillic
+	   BY:  [decodeURIComponent("%D0%B0%D0%B3%D0%BE%D0%BD%D1%8C")],//Bellarus
+	   ES:  ["incendio","fuego"],
+	   FR: 	["feu"],
+	   GB:  ["fire"],
+	   RU: 	[decodeURIComponent("%D0%9F%D0%BE%D0%B6%D0%B0%D1%80")], 
+	   UA: 	[decodeURIComponent("%D0%92%D0%BE%D0%B3%D0%BE%D0%BD%D1%8C")],//Ukraine
+	   US:  ["fire"],
+	   PT:  ["fogo"],
+	   PL:  [""],
+	   IE:  [""],
+	   AT:  [""],
+	   CH:	["brand"]
+   }
 };

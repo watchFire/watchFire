@@ -41,11 +41,12 @@ module.exports = function(con, bd, twit) {
    });
 
    //City properties
-   function City(area, coordinates) {
+   function City(area, coordinates, countryCode) {
       this.coordinates = coordinates
       this.noise = 0;
       this.area = area;
       this.tweets = [];
+      this.countryCode=countryCode;
    }
    //Extract cities from hotspots
    function citiesFromHotspots(cities,hotspots){
@@ -59,8 +60,8 @@ module.exports = function(con, bd, twit) {
 	   			geo.findNearby({lat:p.coordinates.coordinates[1],lng:p.coordinates.coordinates[0]}, function(err, results){
 	   	          	if (err) { console.log(err); return; }
 	   		        var name = results.geonames[0].name;
-	   		        console.log("City " + name + " ["+p.coordinates.coordinates+"]...");
-	   		        cities[name] = new City(round(p.coordinates.coordinates), p.coordinates);
+	   		        console.log("City " + name +" "+results.geonames[0].countryCode+" " + " ["+p.coordinates.coordinates+"]...");
+	   		        cities[name] = new City(round(p.coordinates.coordinates), p.coordinates, results.geonames[0].countryCode);
 	   		        if(--tasksToGo === 0){
 	   		           openTwitterStream(cities);
 	   		        }
@@ -71,12 +72,17 @@ module.exports = function(con, bd, twit) {
    //Open twitter stream
    function openTwitterStream(cities){
 	   console.log("cities: "+Object.keys(cities).length);
-       console.log("keywords: "+conf.keywords.length);
        var watchSymbols="";
        var tweet;
+       var wordsForFire=[];
        for (var city in cities) {
-       		for (var j = 0; j < conf.keywords.length; j++) {
-       			symbol=conf.keywords[j]+" "+city
+    	   	if (cities[city].countryCode in conf.keywords){//verify we know translations of fire for this country
+    	   		wordsForFire = conf.keywords[cities[city].countryCode];
+    	   	}else{//else use "fire"
+    	   		wordsForFire = ["fire"];
+    	   	}
+       		for (var i = 0; i < wordsForFire.length; i++) {
+       			symbol=wordsForFire[i]+" "+city
        			watchSymbols+=symbol+",";//',' as or ' ' as and
        			numTweets++;
        			if(numTweets<150){
