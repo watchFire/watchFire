@@ -148,6 +148,7 @@ module.exports = function(con, bd, twit) {
             // This socket return tweets based on a point
             client.on('fire', function(data) {
                // emit this.cities[city].tweets
+               client.emit("foo", that.cities);
                console.log(data);
             });
          });

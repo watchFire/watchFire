@@ -16,11 +16,13 @@ function run() {
               
               rfrp = docs[i].frp/480.0;
               
-              new_confidence = (docs[i].confidence*rfrp/100.0)*cfg.weight.frp_risk +
-                                                      rt*cfg.weight.temp_risk +
-                                                      rh*cfg.weight.humid_risk +
-                                                      rv*cfg.weight.wind_risk +
-                                                      rvg*cfg.weight.veg_risk;
+              //console.log("rfrp = " + rfrp);
+              //console.log("confidence = " + docs[i].confidence/100);
+              
+              //new_confidence = (old_confidence*0.2 + frp*0.8)*0.8 + (temp*0.25 + humedad*0.3 + wind*0.15 + veg*0.3)*0.2
+              new_confidence = ((docs[i].confidence/100.0)*cfg.weight.confidence_risk + rfrp*cfg.weight.frp_risk)*cfg.weight.hotspot_risk +
+                               (rt*cfg.weight.temp_risk + rh*cfg.weight.humid_risk +
+                               rv*cfg.weight.wind_risk + rvg*cfg.weight.veg_risk)*cfg.weight.climate_risk;
 
               // Vemos criticidad a partir de puntos con ruído social
               if (docs[i].noise > cfg.threshold.social_noise) {

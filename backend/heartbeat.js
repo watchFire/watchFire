@@ -36,11 +36,7 @@ function startHeartBeet(err, client) {
        // Launch twitter listeners for checking social noise and activates 
        // websockets. 
        if (!err) {
-     	   var twitter = new twitta(client, cfg.bd, cfg.twitter);
-           dbmanager.find(cfg.bd.FIRES, {}, function(err, docs) {
-              if (err) return;
-              twitter.init(docs);
-           });
+     	   GLOBAL.twitter = new twitta(client, cfg.bd, cfg.twitter);
        }
    }
 

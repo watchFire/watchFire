@@ -50,11 +50,14 @@ module.exports = {
       social_noise : 30
    },
    weight : {
-      frp_risk : 0.3,
-      temp_risk : 0.15,
-      humid_risk : 0.2,
-      wind_risk : 0.1,
-      veg_risk : 0.25
+      frp_risk : 0.2,
+      confidence_risk : 0.8,
+      hotspot_risk : 0.8,
+      temp_risk : 0.25,
+      humid_risk : 0.3,
+      wind_risk : 0.15,
+      veg_risk : 0.3,
+      climate_risk : 0.2
    },
    twitter : {
       "watchFire_" : {

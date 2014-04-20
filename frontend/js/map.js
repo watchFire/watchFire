@@ -108,10 +108,10 @@
          center = new google.maps.LatLng(fires[hotspot].coordinates.coordinates[1],
                         fires[hotspot].coordinates.coordinates[0]);
 
-	 if (fires[hotspot].confidence > 0.3) colorcito = '#FF0000';
-         else if (fires[hotspot].confidence > 0.25) colorcito = '#FF4500';
-         else if (fires[hotspot].confidence > 0.2) colorcito = '#FF8C00';
-         else if (fires[hotspot].confidence > 0.1) colorcito = '#FFA500';
+	 if (fires[hotspot].confidence > 0.9) colorcito = '#FF0000';
+         else if (fires[hotspot].confidence > 0.8) colorcito = '#FF4500';
+         else if (fires[hotspot].confidence > 0.65) colorcito = '#FF8C00';
+         else if (fires[hotspot].confidence > 0.5) colorcito = '#FFA500';
          else colorcito = '#FFD700';
 		
          radius = 500000/Math.pow(1.75, map.zoom);
@@ -156,12 +156,12 @@
 	
    function showInfo() {
       emitGiveMeTweets(this.id); //Pedir tweet mediante WS del fuego con ese id
-      console.log(this);
+
       var date = this.timeStamp;
       var conf = this.confidence;
       var imp = this.impact;
       var dir = this.windDirection;
-      if(dir==-1) dir=-1;
+      if(dir==-1) dir="-";
       else if(dir>337 || dir<22) dir="E"
       else if(dir>=22 || dir<67) dir="NE"
       else if(dir>=67 || dir<112) dir="N"
@@ -171,16 +171,31 @@
       else if(dir>=247 || dir<292) dir="S"
       else if(dir>=292 || dir<=337) dir="SE"
       
+      var date_parts = date.split('-');
+      var aux_parts = date_parts[2].split('T');
+      date_parts[2] = aux_parts[0];
+      var hour_parts = aux_parts[1].split(':');
+      
+      var fid = $('#time_line').attr('fire');
+      if(fid){
+         hideInfo();
+      }
+      $('#time_line').attr('fire', this.id);
+      
       $('#time_line').fadeIn('slow');
       $('#info').fadeOut('slow', function() {
          $('#info').html("");
-         $('#info').html("<b>Date:</b> " + date + ". <b>Confidence:</b> " + conf + ". <b>Impact:</b> " + imp + ". <b>Wind direction:</b> " + dir + ".");
+         $('#info').html("<i class='fa fa-check'></i><b>Date:</b> " + date_parts[2] + "/" + date_parts[1] + "/" + date_parts[0] + " - " + hour_parts[0] + ":" + hour_parts[1] + "  <b>Confidence:</b> " + (conf*100).toFixed(2) + "%  <b>Impact:</b> " + imp.toFixed(2) + "  <b>Wind direction:</b> " + dir);
          $('#info').fadeIn();
       });
    }
 
    function hideInfo(){
-      $('#time_line').fadeOut();
+      var fid = $('#time_line').attr('fire');
+      stopTweets(fid);
+      $('#time_line').attr('fire', '');
+      
+      $('#time_line').fadeOut('slow');
       $('#info').fadeOut('slow', function() {
          $('#info').text("");
       });
@@ -220,17 +235,9 @@
                   },
          error: function(error) {
                      console.log("error");
+                     console.log(error);
                }
       });
-   }
-
-
-
-
-   function printTweet(data){
-      console.log(data);
-      $('#time_line').prepend('<div class="tweet"><h3>'+ data.username +'</h3><p>'+ data.text +'</p></div>');
-//      $('#time_line').prepend('<div class="tweet"><h3>Username</h3><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras quis venenatis elit. Curabitur a justo nec justo lacinia tincidunt a et mi.</p></div>');
    }
 
 })()
