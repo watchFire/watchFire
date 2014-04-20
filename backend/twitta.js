@@ -45,6 +45,7 @@ module.exports = function(con, bd, twit) {
                var code = results.geonames[0].countryCode;
                cities[name] = new City(p._id, round(p.coordinates.coordinates), p.coordinates, code);
             }
+            console.log("aaaa");
             pending--;
             if (pending == 0) {
                callback(cities);
@@ -73,7 +74,8 @@ module.exports = function(con, bd, twit) {
          // Buff tweets related to hotspot in this city
          if (pendingRequests > 0) {
             pendingRequests--; 
-            T.get('search/tweets', {q: symbol, count: 100}, function(err, reply) {
+            T.get('search/tweets', {q: keyword, count: 100}, function(err, reply) {
+               console.log("search/tweets " + reply.statuses.length + " tweets");
                if (err) { console.log(err); return }
                var t, tweet;
                for (t in reply.statuses) {
@@ -86,7 +88,8 @@ module.exports = function(con, bd, twit) {
       }
 
       // Once the initial search is done, we connect to streaming API
-      this.stream = T.stream("statuses/filter", {track: watchSymbols.toString()});
+      this.stream = T.stream("statuses/filter", {track: watchSymbols+""});
+      console.log("set stream");
       this.stream.on("tweet", function(t) {
          console.log(" >>> received tweet: " + t.text);
          var tweet, c;
