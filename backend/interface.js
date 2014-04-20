@@ -5,6 +5,10 @@ var mongodb = require("mongodb");
 var express = require("express");
 var cfg = require("./config.js");
 
+// URL
+var domain = "watchfireproject.com";
+var originRegExp = new RegExp("^https?:\\/\\/(\\w+\\.)*"+domain+"$");
+
 // Check if we are executing test version and avoid conflicts
 if (process.argv[2] == "testing") {
    console.log("testing port");
@@ -19,13 +23,11 @@ var server = function() {
 
    var app = express();
 
-   app.get("/", function(req, res) {
-      res.send("it works");
-   });
-
-   app.all("*", function(req, res, next) {
-      res.header("Access-Control-Allow-Origin", "*");
-      res.header("Access-Control-Allow-Headers", "*");
+   app.get("*", function(req, res, next) {
+      if (originRegExp.test(req.origin)) {
+         res.header("Access-Control-Allow-Origin", req.origin);
+         res.header("Access-Control-Allow-Headers", "*");
+      }
       next();
    });
 
