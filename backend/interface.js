@@ -6,8 +6,7 @@ var express = require("express");
 var cfg = require("./config.js");
 
 // URL
-var domain = "watchfireproject.com";
-var originRegExp = new RegExp("^https?:\\/\\/(\\w+\\.)*"+domain+"$");
+var originRegExp = new RegExp("^https?:\\/\\/(\\w+\\.)*"+cfg.domain+"$");
 
 // Check if we are executing test version and avoid conflicts
 if (process.argv[2] == "testing") {

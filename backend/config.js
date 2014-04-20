@@ -5,6 +5,7 @@ module.exports = {
       data_file : "data/raw.txt",
       java_crawler : "../serviceUtils/serviceUtils_old.jar"
    },
+   domain : "watchfireproject.com",
    cron : {
       insert: "0 0 * * * *",
       filter: "*/15 * * * * *"

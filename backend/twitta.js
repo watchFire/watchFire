@@ -147,7 +147,6 @@ module.exports = function(con, bd, twit) {
             client.on('fire', function(data) {
                // emit this.cities[city].tweets
                client.emit("foo", that.cities);
-               console.log(data);
             });
          });
       },
