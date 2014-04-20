@@ -45,7 +45,8 @@ module.exports = function(con, bd, twit) {
                code = results.geonames[0].countryCode;
                cities[name] = new City(p._id, round(p.coordinates.coordinates), p.coordinates, code);
             }
-            if (pending--) {
+            pending--;
+            if (pending == 0) {
                callback(cities);
             }
          });
