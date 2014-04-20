@@ -7,6 +7,7 @@ watchFire is a real time web application for detection of fires using NASA data 
 
 The actual goal of this project is to detect fires in order to decrease the damages in the future.
 
+
 Data model
 ---------
 
