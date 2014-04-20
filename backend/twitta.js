@@ -5,7 +5,7 @@ var mongodb = require("mongodb");
 var Geode =require('geode');
 var conf = require('./config');
 var util = require('util')
-var io = require('socket.io').listen(conf.sockets.port);
+var io = require('socket.io').listen(conf.sockets.port-1); // temp for test
 
 //TODO:
 //-test socket
@@ -29,7 +29,7 @@ io.configure(function(){
 });
 
 io.sockets.on('connection', function (mysocket) {
-	  socket.on('fire', function (data) {
+	  mysocket.on('fire', function (data) {
 		  console.log(data);
 	  });
 });
