@@ -14,7 +14,7 @@ module.exports = function(con, bd, twit) {
    var T = new Twit(twit["watchFireZar"]);
 
    // Twitter rates
-   var time = 15000*60, maxRate = 180, pending;
+   var time = 15000*60, maxRate = 180, pendingRequests;
 
    // Tweet class definition
    function Tweet(user, text, coordinates) {
@@ -69,8 +69,8 @@ module.exports = function(con, bd, twit) {
          cities[city].regexp = new RegExp(city, "gi");
 
          // Buff tweets related to hotspot in this city
-         if (pending > 0) {
-            pending--; 
+         if (pendingRequests > 0) {
+            pendingRequests--; 
             T.get('search/tweets', {q: symbol, count: 100}, function(err, reply) {
                if (err) { console.log(err); return }
                var t, tweet;
@@ -81,26 +81,30 @@ module.exports = function(con, bd, twit) {
                cities[city].noise += reply.statuses.length;
             });
          }
+         
+         // We need to join for callbaks
+         if (watchSymbols.length == cities.length) {
+            // Once the initial search is done, we connect to streaming API
+            this.stream = T.stream("statuses/filter", {track: watchSymbols.toString()});
+            this.stream.on("tweet", function(t) {
+               console.log(" >>> received tweet: " + t.text);
+               var tweet, c;
+               for (c in cities) {
+                  // Since we are listening in a single stream for every hotspot, we need to
+                  // filter and find the correct one.
+                  if (t.text.match(cities[c].regexp)) {
+                     tweet = new Tweet(t.user.screen_name, t.text, t.coordinates||cities[c].coordinates);
+                     // if we want to buff more tweets, this is the place
+                     // Emit tweet to appropiate listener 
+                     io.sockets.emit("tweet"+cities[c].id, tweet);
+                     cities[city].noise++;
+                     break;
+                  }
+               }
+            });
+         }
       }
 
-      // Once the initial search is done, we connect to streaming API
-      this.stream = T.stream("statuses/filter", {track: watchSymbols.toString()});
-      this.stream.on("tweet", function(t) {
-         console.log(" >>> received tweet: " + t.text);
-         var tweet, c;
-         for (c in cities) {
-            // Since we are listening in a single stream for every hotspot, we need to
-            // filter and find the correct one.
-            if (t.text.match(cities[c].regexp)) {
-               tweet = new Tweet(t.user.screen_name, t.text, t.coordinates||cities[c].coordinates);
-               // if we want to buff more tweets, this is the place
-               // Emit tweet to appropiate listener 
-               io.sockets.emit("tweet"+cities[c].id, tweet);
-               cities[city].noise++;
-               break;
-            }
-         }
-      });
    }
 
    // Update noise to database
@@ -137,7 +141,7 @@ module.exports = function(con, bd, twit) {
          // Check if has been enought noise about a hotspot
          this.checker = setInterval(checkNoise, 20000, that.cities);
          // Periodically reset number of tweets we can send
-         this.rates = setInterval(function(){pending = maxRate}, time);
+         this.rates = setInterval(function(){pendingRequests = maxRate}, time);
          // Set and open sockets
          io.configure(function(){io.set('resource','/tweets')});
          io.on('connection', function(client) {
