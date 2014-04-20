@@ -109,8 +109,7 @@ module.exports = function(con, bd, twit) {
 
    // Update noise to database
    var notify = function(coord, noise) {
-//	   FIXME:
-//      new mongodb.Collection(con, bd.HOT_SPOTS).update({coordenadas:coord}, {$inc:{noise: noise}});
+      dbmanager.update(bd.HOT_SPOTS, {coordinates:coord}, {$inc:{noise: noise}}, null, function(){});
    } 
 
    // Checks social noise
