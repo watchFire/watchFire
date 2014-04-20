@@ -60,7 +60,8 @@ module.exports = function(con, bd, twit) {
       var watchSymbols = [], tweet, keyword;
       for (var city in cities) {
          if (cities[city].countryCode in conf.keywords) {
-            keyword = conf.keywords[cities[city].countryCode]+" "+city;
+            // For every keyword return a string paired with city name
+            keyword = conf.keywords[cities[city].countryCode].map(function(a){return a+" "+city});
          } else {
             keyword = "fire "+city;
          }
