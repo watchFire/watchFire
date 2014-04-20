@@ -28,15 +28,19 @@ dbmanager.connect(startHeartBeet);
 function startHeartBeet(err, client) {
 	crawler.doEverything();
     if (!err) {
-       // Registers job who parses raw data to collection
-       // HOT_SPOTS
+       // Registers job to parse raw data into HOT_SPOTS collection
        jobs.insertJob(cfg.cron.insert);
        // Use model to determine fires
        jobs.filterJob(cfg.cron.filter);
 
-       // Update database with social noise
+       // Launch twitter listeners for checking social noise and activates 
+       // websockets. 
        if (!err) {
-    	   GLOBAL.twitter = new twitta(client, cfg.bd, cfg.twitter);
+     	   var twitter = new twitta(client, cfg.bd, cfg.twitter);
+           dbmanager.find(cfg.bd.FIRES, {}, function(err, docs) {
+              if (err) return;
+              twitter.init(docs);
+           });
        }
    }
 
