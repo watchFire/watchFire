@@ -5,7 +5,7 @@ var mongodb = require("mongodb");
 var Geode =require('geode');
 var conf = require('./config');
 var util = require('util')
-var io = require('socket.io').listen(conf.sockets.port-1); // temp for test
+var io = require('socket.io').listen(conf.sockets.port);
 
 
 module.exports = function(con, bd, twit) {
