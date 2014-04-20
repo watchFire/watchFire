@@ -25,11 +25,11 @@ function Tweet(user, text, coordinates) {
 
 //Open socket for receiving data
 io.configure(function(){
-   io.set('resource','tweets');
+   io.set('resource','/tweets');
 });
 
-io.sockets.on('connection', function (mysocket) {
-	  mysocket.on('fire', function (data) {
+io.on('connection', function (client) {
+	  client.on('fire', function (data) {
 		  console.log(data);
 	  });
 });
