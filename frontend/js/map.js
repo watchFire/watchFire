@@ -1,6 +1,6 @@
 (function() {
 
-   var API_HOST_URL = "http://test.watchfireproject.com/api/";
+   var API_HOST_URL = "http://localhost:9999/";
    var API_HOTSPOTS_PATH = function(lon, lat, rad) {
       var URL = "points/:lon/:lat/:rad";
       return URL.replace(/(:\w+)/g, function(param) {
@@ -82,7 +82,11 @@
          requestPoints();
       }, 10000);
           
-      $('#map-canvas').append('<div id="time_line" style="display: none;"></div>');
+      if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+         $('<div id="time_line" style="display: none"></div>').insertBefore('#info');
+      }else{
+         $('#map-canvas').append('<div id="time_line" style="display: none"></div>');
+      }
    }
 
    // Pinta radios
@@ -151,7 +155,7 @@
    }
 	
    function showInfo() {
-      //emitGiveMeTweets(this.timeStamp.id); //Pedir tweet mediante WS del fuego con ese id
+      emitGiveMeTweets(this.id); //Pedir tweet mediante WS del fuego con ese id
       console.log(this);
       var date = this.timeStamp;
       var conf = this.confidence;
@@ -224,6 +228,7 @@
 
 
    function printTweet(data){
+      console.log(data);
       $('#time_line').prepend('<div class="tweet"><h3>'+ data.username +'</h3><p>'+ data.text +'</p></div>');
 //      $('#time_line').prepend('<div class="tweet"><h3>Username</h3><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras quis venenatis elit. Curabitur a justo nec justo lacinia tincidunt a et mi.</p></div>');
    }

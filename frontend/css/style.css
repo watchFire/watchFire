@@ -15,15 +15,18 @@ body {
 /* Skeletons */
 
 .header {
-    width: 90%;
-    margin: 0 auto;
-    margin: 20px 30px 20px 60px;
+    width: 100%;
+    margin: 20px 0px 0px 0px;
     height: 125px;
     text-align: center;
 }
 
 .header h1 {
     display: none;
+}
+
+.header > img {
+    width: 490px;
 }
 
 #location {
@@ -58,7 +61,7 @@ body {
     clear: both;
     padding: 10px;
     border: 1px solid #000000;
-    margin-top: 30px;
+    margin-top: 10px;
 }
 
 #info {
@@ -227,4 +230,51 @@ border-bottom: 1px solid #AAAAAA;
 
 .tweet h3{
 color: #690e28;
+}
+
+@media only screen and (max-width: 610px){
+
+.header {
+    margin-top: 15px;
+    margin-bottom: 0px;
+}
+
+.header > img {
+    width: 300px;
+}
+
+#map-canvas {
+    height: 300px;
+    width:90%;
+    margin: 0px auto;
+    clear: both;
+    padding: 10px;
+    border: 1px solid #000000;
+    margin-top: 0px;
+}
+
+#info {
+    width:90%;
+}
+
+#time_line{
+   height: 277px;
+   width: 90%;
+   position: relative;
+   top: 0px;
+   right: 0px;
+   background-color: rgba(255,255,255,0.8);
+   padding: 0 10px;
+   font-size: 14px;
+   overflow: auto;
+   margin: 15px auto;
+   /*z-index: 100;*/
+}
+
+.bottom {
+    margin: 20px auto;
+    width: 300px;
+    font-style: italic;
+    text-align: center;
+}
 }
