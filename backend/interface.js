@@ -24,10 +24,10 @@ var server = function() {
    var app = express();
 
    app.all("*", function(req, res, next) {
-      //if (originRegExp.test(req.headers.origin)) {
+      if (originRegExp.test(req.headers.origin)) {
          res.header("Access-Control-Allow-Origin", req.headers.origin);
          res.header("Access-Control-Allow-Headers", "*");
-      //}
+      }
       next();
    });
 
