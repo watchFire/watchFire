@@ -17,8 +17,7 @@ function doEverything() {
               for (var i=0; i<data.length; i++) {
                  tmp = parseJSON(data[i]);
                  if (tmp.confidence > cfg.threshold.hotspot) {
-                    counter++;
-                    dbmanager.insert(cfg.bd.HOT_SPOTS, parseJSON(data[i]), function(){});
+                    dbmanager.insert(cfg.bd.HOT_SPOTS, parseJSON(data[i]), function(e){if(!e)counter++});
                  } 
               }
               if (err) return console.error(err);
