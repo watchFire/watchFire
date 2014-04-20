@@ -1,4 +1,4 @@
-var socket = io.connect("http://test.watchfireproject.com/", {resource: "tweets"});
+var socket = io.connect("http://api.watchfireproject.com/", {resource: "tweets"});
 socket.on("connect", function () {
     socket.on("foo", function(data) {
         console.log(data);
