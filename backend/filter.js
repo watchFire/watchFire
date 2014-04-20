@@ -35,6 +35,7 @@ function run() {
 
               // Puntos que ofrecemos al backend
               point = {
+                 "_id": docs[i]._id,
                  "date": docs[i].date,
                  "coordinates" : docs[i].coordinates,
                  "confidence" : new_confidence,

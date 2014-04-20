@@ -1,6 +1,7 @@
 (function() {
 
-   var API_HOST_URL = "http://test.watchfireproject.com/api/";
+//   var API_HOST_URL = "http://test.watchfireproject.com/api/";
+   var API_HOST_URL = "http://localhost:9999/";
    var API_HOTSPOTS_PATH = function(lon, lat, rad) {
       var URL = "points/:lon/:lat/:rad";
       return URL.replace(/(:\w+)/g, function(param) {

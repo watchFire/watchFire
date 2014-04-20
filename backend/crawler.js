@@ -17,8 +17,8 @@ function doEverything() {
               for (var i=0; i<data.length; i++) {
                  tmp = parseJSON(data[i]);
                  if (tmp.confidence > cfg.threshold.hotspot) {
-                    counter++;
                     dbmanager.insert(cfg.bd.HOT_SPOTS, parseJSON(data[i]), function(){});
+                    counter++;
                  } 
               }
               if (err) return console.error(err);
@@ -43,9 +43,9 @@ function makeJavaChild(callback) {
        var java = spawn('java', ['-jar', cfg.path.java_crawler, cfg.path.data_file], {detached: false, stdio: ['ignore', 'ignore','ignore']});
         java.on('close', function (code) {
           console.log("Parsing file.");
-           var data = JSON.parse(fs.readFileSync(cfg.path.data_file, "utf8"));
-           console.log("makeJavaChild.makeJavaCrawler() the crawler dies.");
-           callback(data);
+          var data = JSON.parse(fs.readFileSync(cfg.path.data_file, "utf8"));
+          console.log("makeJavaChild.makeJavaCrawler() the crawler dies.");
+          callback(data);
         
         });
     } catch (e) {
