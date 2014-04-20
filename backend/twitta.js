@@ -45,9 +45,8 @@ module.exports = function(con, bd, twit) {
                var code = results.geonames[0].countryCode;
                cities[name] = new City(p._id, round(p.coordinates.coordinates), p.coordinates, code);
             }
-            console.log("aaaa");
-            pending--;
-            if (pending == 0) {
+            console.log("Pending:"+pending);
+            if (--pending === 0) {
                callback(cities);
             }
          });
@@ -66,12 +65,13 @@ module.exports = function(con, bd, twit) {
          } else {
             keyword = "fire "+city;
          }
-
+         console.log("keyword: " + keyword);
          // Query and future regexp for streaming
          watchSymbols.push(keyword);
          cities[city].regexp = new RegExp(city, "gi");
 
          // Buff tweets related to hotspot in this city
+         console.log("Pending requests:"+pendingRequests);
          if (pendingRequests > 0) {
             pendingRequests--; 
             T.get('search/tweets', {q: keyword, count: 100}, function(err, reply) {
@@ -79,16 +79,18 @@ module.exports = function(con, bd, twit) {
                if (err) { console.log(err); return }
                var t, tweet;
                for (t in reply.statuses) {
+            	  console.log(" >>> found tweet: " + util.inspect(tweet));
                   tweet = reply.statuses[t];
                   cities[city].tweets.push(new Tweet(tweet.user.screen_name, tweet.text, tweet.coordinates||cities[city].coordinates));
+                  console.log(util.inspect(cities[city].tweets[cities[city].tweets.length-1]));
                }
                cities[city].noise += reply.statuses.length;
             });
          }
       }
-
+      console.log("watchSymbols: " + watchSymbols);
       // Once the initial search is done, we connect to streaming API
-      this.stream = T.stream("statuses/filter", {track: watchSymbols+""});
+      this.stream = T.stream("statuses/filter", {track: watchSymbols});
       console.log("set stream");
       this.stream.on("tweet", function(t) {
          console.log(" >>> received tweet: " + t.text);
