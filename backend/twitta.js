@@ -4,6 +4,7 @@ var timer = require("timer");
 var mongodb = require("mongodb");
 var Geode =require('geode');
 var conf = require('./config');
+var dbmanager = require('./dbmanager');
 var util = require('util')
 var io = require('socket.io').listen(conf.sockets.port-1); // temp for test
 
@@ -79,8 +80,7 @@ module.exports = function(con, bd, twit) {
          console.log("search: " + search);
          
          // Buff tweets related to hotspot in this location
-         if (pendingRequests > 0) {
-            pendingRequests--; 
+         if (pendingRequests-- > 0) {
             T.get('search/tweets', {q: search, count: 100}, function(err, reply) {
             	if (err) { console.log(err); return }
                console.log("search/tweets " + reply.statuses.length + " tweets");
