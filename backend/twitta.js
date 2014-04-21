@@ -13,9 +13,11 @@ module.exports = function(con, bd, twit) {
 
    // Twitter credentials
    var T = new Twit(twit["watchFire_"]);
+   //Geonames credentials
+   var geo = new Geode('watchFire', {language: 'en', country : 'US'});
 
    // Twitter rates
-   var time = 15000*60, maxRate = 179, pendingRequests;
+   var time = 15000*60, maxRate = 179, pendingRequests=maxRate;
 
    // Tweet class definition
    function Tweet(user, text, coordinates) {
@@ -36,7 +38,6 @@ module.exports = function(con, bd, twit) {
 
    // Extract location names from hotspots
    function parseHotSpots(locations, hotspots, callback) {
-      var geo = new Geode('watchFire', {language: 'en', country : 'US'});
       var p, name, code, pending = hotspots.length;
       for (var i in hotspots) {
          geo.findNearby({lat:hotspots[i].coordinates.coordinates[1], lng:hotspots[i].coordinates.coordinates[0]}, function(err, results) {
@@ -67,11 +68,11 @@ module.exports = function(con, bd, twit) {
          	keywords = conf.keywords[locations[location].countryCode];
          	for (var i = 0; i < keywords.length; i++) {
        			search+=keywords[i]+" "+location+","
-       			filterSize+=2;
+       			filterSize+=3;
             }
          } else {
             search = location+" fire,";
-            filterSize+=2;
+            filterSize+=3;
          }
          if (filterSize<=400){//twitter API limit = 400 single words for filter
          	filter+=search;
@@ -80,19 +81,17 @@ module.exports = function(con, bd, twit) {
          console.log("search: " + search);
          
          // Buff tweets related to hotspot in this location
+         console.log("pendingRequests: " + pendingRequests);
          if (pendingRequests-- > 0) {
-            T.get('search/tweets', {q: search, count: 100}, function(err, reply) {
-            	if (err) { console.log(err); return }
-               console.log("search/tweets " + reply.statuses.length + " tweets");
-               var t, tweet;
-               for (t in reply.statuses) {
-            	   console.log(" >>> found tweet: " + util.inspect(tweet));
-                  tweet = reply.statuses[t];
-                  locations[location].tweets.push(new Tweet(tweet.user.screen_name, tweet.text, tweet.coordinates||locations[location].coordinates));
-                  console.log(util.inspect(locations[location].tweets[locations[location].tweets.length-1]));
-               }
-               locations[location].noise += reply.statuses.length;
-            });
+         	T.get('search/tweets', { q: search, count: 100 }, function(err, reply) {
+ 		    	   if (err) { console.log(err); return; }
+ 		    	   for (var j = 0; j < reply.statuses.length; j++) {
+ 		    		   locations[location].tweets.push(new Tweet(reply.statuses[j].user.screen_name,reply.statuses[j].text,reply.statuses[j].coordinates||locations[location].coordinates));
+ 		    		   io.sockets.emit('tweet', tweet);
+ 		    		   console.log(util.inspect(tweet));
+ 		    		   locations[location].noise++;
+ 		    	   }
+ 		      });
          }
       }
 		filter = filter.substring(0, filter.length - 1);//remove last character
