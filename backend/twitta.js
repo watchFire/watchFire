@@ -11,10 +11,10 @@ var io = require('socket.io').listen(conf.sockets.port-1); // temp for test
 module.exports = function(con, bd, twit) {
 
    // Twitter credentials
-   var T = new Twit(twit["watchFireZar"]);
+   var T = new Twit(twit["watchFire_"]);
 
    // Twitter rates
-   var time = 15000*60, maxRate = 180, pendingRequests;
+   var time = 15000*60, maxRate = 179, pendingRequests;
 
    // Tweet class definition
    function Tweet(user, text, coordinates) {
@@ -23,8 +23,8 @@ module.exports = function(con, bd, twit) {
       this.coordinates = coordinates;
    }
 
-   // City properties
-   function City(id, area, coordinates, countryCode) {
+   // Location properties
+   function Location(id, area, coordinates, countryCode) {
       this.id = id;
       this.coordinates = coordinates;
       this.noise = 0;
@@ -33,82 +33,89 @@ module.exports = function(con, bd, twit) {
       this.countryCode = countryCode;
    }
 
-   // Extract city names from hotspots
-   function parseHotSpots(cities, hotspots, callback) {
+   // Extract location names from hotspots
+   function parseHotSpots(locations, hotspots, callback) {
       var geo = new Geode('watchFire', {language: 'en', country : 'US'});
       var p, name, code, pending = hotspots.length;
       for (var i in hotspots) {
          geo.findNearby({lat:hotspots[i].coordinates.coordinates[1], lng:hotspots[i].coordinates.coordinates[0]}, function(err, results) {
-            if (!err && results.geonames) {
+        	if (err) { console.log(err); return }
+        	if (!err && results.geonames) {
                var p = hotspots[i];
                var name = results.geonames[0].name;
                var code = results.geonames[0].countryCode;
-               cities[name] = new City(p._id, round(p.coordinates.coordinates), p.coordinates, code);
+               locations[name] = new Location(p._id, round(p.coordinates.coordinates), p.coordinates, code);
             }
-            console.log("Pending:"+pending);
             if (--pending === 0) {
-               callback(cities);
+               callback(locations);
             }
          });
       }
    }
 
-   // Open twitter stream listening for all cities with hotspots
-   function openTwitterStreams(cities) {
+   // Open twitter stream listening for all locations with hotspots
+   function openTwitterStreams(locations) {
 
-      // Define watch symbols to search on twitter 
-      var watchSymbols = [], tweet, keyword;
-      for (var city in cities) {
-         if (cities[city].countryCode in conf.keywords) {
-            // For every keyword return a string paired with city name
-            keyword = conf.keywords[cities[city].countryCode].map(function(a){return a+" "+city});
+      // Access to twitter API
+      var filter = "", tweet, search, keywords, pending = Object.keys(locations).length, filterSize=0;
+      console.log("pending: " + pending);
+      for (var location in locations) {
+      	search="";
+         if (locations[location].countryCode in conf.keywords) {
+            // For every search return a string paired with location name
+         	keywords = conf.keywords[locations[location].countryCode];
+         	for (var i = 0; i < keywords.length; i++) {
+       			search+=keywords[i]+" "+location+","
+       			filterSize+=2;
+            }
          } else {
-            keyword = "fire "+city;
+            search = location+" fire,";
+            filterSize+=2;
          }
-         console.log("keyword: " + keyword);
-         // Query and future regexp for streaming
-         watchSymbols.push(keyword);
-         cities[city].regexp = new RegExp(city, "gi");
-
-         // Buff tweets related to hotspot in this city
-         console.log("Pending requests:"+pendingRequests);
+         if (filterSize<=400){//twitter API limit = 400 single words for filter
+         	filter+=search;
+      	}
+         search = search.substring(0, search.length - 1);//remove last character
+         console.log("search: " + search);
+         
+         // Buff tweets related to hotspot in this location
          if (pendingRequests > 0) {
             pendingRequests--; 
-            T.get('search/tweets', {q: keyword, count: 100}, function(err, reply) {
+            T.get('search/tweets', {q: search, count: 100}, function(err, reply) {
+            	if (err) { console.log(err); return }
                console.log("search/tweets " + reply.statuses.length + " tweets");
-               if (err) { console.log(err); return }
                var t, tweet;
                for (t in reply.statuses) {
-            	  console.log(" >>> found tweet: " + util.inspect(tweet));
+            	   console.log(" >>> found tweet: " + util.inspect(tweet));
                   tweet = reply.statuses[t];
-                  cities[city].tweets.push(new Tweet(tweet.user.screen_name, tweet.text, tweet.coordinates||cities[city].coordinates));
-                  console.log(util.inspect(cities[city].tweets[cities[city].tweets.length-1]));
+                  locations[location].tweets.push(new Tweet(tweet.user.screen_name, tweet.text, tweet.coordinates||locations[location].coordinates));
+                  console.log(util.inspect(locations[location].tweets[locations[location].tweets.length-1]));
                }
-               cities[city].noise += reply.statuses.length;
+               locations[location].noise += reply.statuses.length;
             });
          }
       }
-      console.log("watchSymbols: " + watchSymbols);
-      // Once the initial search is done, we connect to streaming API
-      this.stream = T.stream("statuses/filter", {track: watchSymbols});
-      console.log("set stream");
-      this.stream.on("tweet", function(t) {
-         console.log(" >>> received tweet: " + t.text);
-         var tweet, c;
-         for (c in cities) {
-            // Since we are listening in a single stream for every hotspot, we need to
-            // filter and find the correct one.
-            if (t.text.match(cities[c].regexp)) {
-               tweet = new Tweet(t.user.screen_name, t.text, t.coordinates||cities[c].coordinates);
-               // if we want to buff more tweets, this is the place
-               // Emit tweet to appropiate listener 
-               io.sockets.emit("tweet"+cities[c].id, tweet);
-               cities[city].noise++;
-               break;
-            }
-         }
-      });
-
+		filter = filter.substring(0, filter.length - 1);//remove last character
+		console.log("filter: " + filter);
+		// Once the initial search is done, we connect to streaming API
+		this.stream = T.stream("statuses/filter", {track: filter});
+		console.log("set stream");
+		this.stream.on("tweet", function(t) {
+			console.log(" >>> received tweet: " + t.text);
+			var tweet, c;
+			for (c in locations) {
+				// Since we are listening in a single stream for every hotspot, we need to
+				// filter and find the correct one.
+				if (t.text.match(locations[c].regexp)) {
+					tweet = new Tweet(t.user.screen_name, t.text, t.coordinates||locations[c].coordinates);
+					// if we want to buff more tweets, this is the place
+					// Emit tweet to appropiate listener 
+					io.sockets.emit("tweet"+locations[c].id, tweet);
+					locations[location].noise++;
+					break;
+				}
+			}
+		});
    }
 
    // Update noise to database
@@ -117,11 +124,11 @@ module.exports = function(con, bd, twit) {
    } 
 
    // Checks social noise
-   var checkNoise = function(cities) {
+   var checkNoise = function(locations) {
       console.log("  checking noise...")
-      for (var i in cities) {
-         if (cities[i].noise > 20) {
-            notify(cities[i].coordinates, cities[i].noise);
+      for (var i in locations) {
+         if (locations[i].noise > 20) {
+            notify(locations[i].coordinates, locations[i].noise);
          }
       }
    }
@@ -134,15 +141,15 @@ module.exports = function(con, bd, twit) {
 
    // Return object
    return {
-      cities : {},
+      locations : {},
       init : function(hotspots) {
          console.log("init twitta");
          var that = this;
          this.destroy();
          // Starts structures
-         parseHotSpots(this.cities, hotspots, openTwitterStreams);
+         parseHotSpots(this.locations, hotspots, openTwitterStreams);
          // Check if has been enought noise about a hotspot
-         this.checker = setInterval(checkNoise, 20000, that.cities);
+         this.checker = setInterval(checkNoise, 20000, that.locations);
          // Periodically reset number of tweets we can send
          this.rates = setInterval(function(){pendingRequests = maxRate}, time);
          // Set and open sockets
@@ -150,8 +157,8 @@ module.exports = function(con, bd, twit) {
          io.on('connection', function(client) {
             // This socket return tweets based on a point
             client.on('fire', function(data) {
-               // emit this.cities[city].tweets
-               client.emit("foo", that.cities);
+               // emit this.locations[location].tweets
+               client.emit("foo", that.locations);
             });
          });
       },
