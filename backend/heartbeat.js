@@ -22,11 +22,11 @@ if (process.argv[2] == "testing") {
 
 //Initialize database
 dbmanager.init(cfg.bd);
-dbmanager.connect(startHeartBeet);
+dbmanager.connect(startHeartBeat);
 
 //Launch core
-function startHeartBeet(err, client) {
-	crawler.doEverything();
+function startHeartBeat(err, client) {
+    crawler.doEverything();
     if (!err) {
        // Registers job to parse raw data into HOT_SPOTS collection
        jobs.insertJob(cfg.cron.insert);

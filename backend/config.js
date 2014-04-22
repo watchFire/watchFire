@@ -8,7 +8,7 @@ module.exports = {
    domain : "watchfireproject.com",
    cron : {
       insert: "0 0 * * * *",
-      filter: "*/15 * * * * *"
+      filter: "0 */1 * * * *"
    },
    bd : {
       name : "fire",
@@ -75,18 +75,19 @@ module.exports = {
       }
    },
    keywords : {
-	   AT:  ["feuer"],
+	   AT:  ["feuer","brand","walbrand"],
 	   BY:  ["агонь"],//Bellarus decodeURIComponent("%D0%B0%D0%B3%D0%BE%D0%BD%D1%8C")
 	   CH:	["brand"],
+	   DE:  ["feuer","brand","walbrand"],
 	   ES:  ["incendio","fuego"],
 	   FR: 	["feu"],
-	   GB:  ["fire"],
-	   IE:  ["fire"],
+	   GB:  ["fire","burning","wildfire"],
+	   IE:  ["fire","burning","wildfire"],
 	   PL:  ["ogień"],
 	   PT:  ["fogo"],
 	   RU: 	["Пожар","огонь"], //decodeURIComponent("%D0%9F%D0%BE%D0%B6%D0%B0%D1%80")
 	   UA: 	["вогонь"],//Ukraine decodeURIComponent("%D0%92%D0%BE%D0%B3%D0%BE%D0%BD%D1%8C")
-   	   US:  ["fire"]
+   	   US:  ["fire","burning","wildfire"]
 
    }
 };

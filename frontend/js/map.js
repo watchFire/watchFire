@@ -155,6 +155,12 @@
    }
 	
    function showInfo() {
+   
+      var fid = $('#time_line').attr('fire');
+      if(fid){
+         hideInfo();
+      }
+   
       emitGiveMeTweets(this.id); //Pedir tweet mediante WS del fuego con ese id
 
       var date = this.timeStamp;
@@ -176,10 +182,6 @@
       date_parts[2] = aux_parts[0];
       var hour_parts = aux_parts[1].split(':');
       
-      var fid = $('#time_line').attr('fire');
-      if(fid){
-         hideInfo();
-      }
       $('#time_line').attr('fire', this.id);
       
       $('#time_line').fadeIn('slow');
@@ -195,6 +197,7 @@
       stopTweets(fid);
       $('#time_line').attr('fire', '');
       
+      $('#time_line').html("");
       $('#time_line').fadeOut('slow');
       $('#info').fadeOut('slow', function() {
          $('#info').text("");
