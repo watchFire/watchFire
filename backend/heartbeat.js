@@ -10,7 +10,6 @@ var dbmanager = require('./dbmanager');
 var jobs = require('./jobs');
 var cfg = require('./config');
 var time = require('time');
-var mkdirp = require('mkdirp');
 var twitta = require('./twitta');
 var filter = require('./filter');
 

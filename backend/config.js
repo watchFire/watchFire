@@ -74,6 +74,10 @@ module.exports = {
          access_token_secret: "igDWly8oGRCUYVRZAC98AIPKSa1ATtAbzYnZAOTQqxlP5"
       }
    },
+   geode : {
+      user : "watchFire",
+      options : {language: 'en', country : 'US'}
+   },
    keywords : {
 	   AT:  ["feuer","brand","walbrand"],
 	   BY:  ["агонь"],//Bellarus decodeURIComponent("%D0%B0%D0%B3%D0%BE%D0%BD%D1%8C")
