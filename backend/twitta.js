@@ -111,9 +111,9 @@ module.exports = function() {
          
          // Buff tweets related to hotspot in this location
          if (pendingRequests-- > 0) {
-            console.log("search for " + loc + ": " + search);
+            (function(l, s){
             T.get('search/tweets', {q: search, count: 100}, function(err, reply) {
-               var l = loc, tweet;
+               var tweet;
  	           if (err) {
                   console.log("Error 'search/tweets': "+err);
                   return;
@@ -125,7 +125,7 @@ module.exports = function() {
  		          console.log(util.inspect(tweet));
  		          locations[l].noise++;
  	           }
- 	        });
+ 	        })})(loc, search);
  	     }
       }
 
