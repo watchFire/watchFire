@@ -11,8 +11,9 @@ function emitGiveMeTweets(fireid) {
         id: fireid
     });
     socket.on(fireid, function(data) {
-        console.log("YAP!");
-        printTweet(data);
+       for (var t in data) {
+          printTweet(data[t]);
+       }
     });
 }
 
