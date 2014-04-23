@@ -13,7 +13,7 @@ var io = require('socket.io').listen(conf.sockets.port-1); //just for dev
 module.exports = function() {
 
    // Twitter credentials
-   var T = new Twit(conf.twitter["watchFire_"]);
+   var T = new Twit(conf.twitter["watchFireZar"]);
 
    //Geonames credentials
    //var geo = new Geode(conf.geode.name, conf.geode.options);
@@ -56,7 +56,7 @@ module.exports = function() {
             geo.findNearby({lat:hotspots[j].coordinates.coordinates[1], lng:hotspots[j].coordinates.coordinates[0]}, function(err, results) {
                if (!err && results.geonames) {
                   var p = hotspots[j], name = results.geonames[0].name, code = results.geonames[0].countryCode;
-                  console.log(" - registered " + name);
+                  console.log(" - registered " + name + " - id: " + p._id);
                   // If this location already exists we add new hotspots to it 
                   if (locations[name]) {
                      locations[name].id.push(p._id);
@@ -160,13 +160,14 @@ module.exports = function() {
    // Send all tweets related to fid
    function sendBuffered(locations, fid) {
       for (var loc in locations) {
-         for (var id in locations[loc].id) {
-            if (id == fid) { 
-               io.sockets.emit(id, locations[loc].tweets);
+         for (var i in locations[loc].id) {
+            if (locations[loc].id[i] == fid) { 
+               io.sockets.emit(fid, locations[loc].tweets);
                return;
             }
          }
       } 
+      console.log("aaa");
    }
 
    // Update noise to database

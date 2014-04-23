@@ -1,5 +1,6 @@
 var cfg = require('./config');
 var dbmanager = require('./dbmanager');
+var ObjectId = require('mongodb').ObjectID;
 
 function run() {
     console.log("filter process");
@@ -49,7 +50,7 @@ function run() {
                             "windDirection" : docs[i].windDirection
                         }
 
-                        dbmanager.update(cfg.bd.FIRES, {coordinates: docs[i].coordinates}, point, {upsert:true}, function(err){});
+                        dbmanager.insert(cfg.bd.FIRES, point, function(err){});
                     }
                 }
            } 
