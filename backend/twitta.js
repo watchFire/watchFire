@@ -53,7 +53,7 @@ module.exports = function() {
          if (j == hotspots.length) {
             callback(locations);
          } else {
-            geo.findNearby({lat:hotspots[j].coordinates.coordinates[1], lng:hotspots[j].coordinates.coordinates[0]}, function(err, results) {
+            geo.findNearbyPlaceName({lat:hotspots[j].coordinates.coordinates[1], lng:hotspots[j].coordinates.coordinates[0]}, function(err, results) {
                if (!err && results.geonames) {
                   var p = hotspots[j], name = results.geonames[0].name, code = results.geonames[0].countryCode;
                   console.log(" - registered " + name + " - id: " + p._id);
