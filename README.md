@@ -1,5 +1,6 @@
 # watchFire
 watchFire is a real time web application for fire detection using NASA data and feedback from people via social networks.
+
 ![watchFire](http://i.imgur.com/2T4nNWf.png)
 
 ## Why?
@@ -21,7 +22,7 @@ For installation follow these steps:
 1. Edit config.js with database params and server options
 2. `node install.js`
 3. `forever node interface.js &`
-4. `$ forever node heartbeat.js &`
+4. `forever node heartbeat.js &`
 
 Now we have some cron jobs crawling and processing NASA's data and a REST API ready for requests. Our app displays this information in a friendly way allowing people to be watchful.
 
